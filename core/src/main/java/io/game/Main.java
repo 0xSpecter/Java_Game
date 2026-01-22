@@ -2,33 +2,57 @@ package io.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+import io.game.structures.*;
+import io.game.creatures.*;
+
 public class Main extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+    private World world;
+    private Player player;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        world = new World();
+        player = new Player(300f, 300f);
+        player.addCollisionShape(new CollisionShape(50, 50, player));
+
+        for (int i = 0; i < 10; i++) {
+            Obj obj = new Obj((int) (Math.random() * 1000 - 500), (int) (Math.random() * 1000 - 500));
+            if (Math.random() < 0.5) {
+                obj.addCollisionShape(
+                        new CollisionShape((int) (Math.random() * 100), (int) (Math.random() * 100), obj));
+            } else {
+                obj.addCollisionShape(new CollisionShape((int) (Math.random() * 100), obj));
+            }
+            world.addObject(obj);
+        }
+
+        world.setPlayer(player);
     }
 
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        this.world.update();
+
+        this.world.drawCollisionShapes();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        world.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        image.dispose();
+
     }
 }
