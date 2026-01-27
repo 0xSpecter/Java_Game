@@ -14,31 +14,8 @@ public class World {
     private float worldHeight = 8000;
     public Viewport viewport;
 
-    // groups
-    public enum Group {
-        OBJECTS,
-        PROJECTILES,
-        CREATURES,
-    }
-
-    private class ObjGroup {
-        public Group type;
-        public Set<Obj> objects = new HashSet<>();
-        public Set<CollisionShape> collisionShapes = new HashSet<>();
-
-        public ObjGroup(Group type) {
-            this.type = type;
-        }
-
-        public void add(Obj item) {
-            this.objects.add(item);
-            this.collisionShapes.add(item.collisionShape);
-        }
-    }
-
-    private HashMap<Group, ObjGroup> groups = new HashMap<>();
-
     private Player player;
+    public Groups groups = new Groups();
 
     // renderers
     ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -50,20 +27,12 @@ public class World {
 
         this.viewport = new FitViewport(this.worldWidth, this.worldHeight, this.camera);
         this.viewport.apply();
-
-        for (Group type : Group.values()) {
-            this.groups.put(type, new ObjGroup(type));
-        }
     }
 
     public void update() {
         this.player.update();
         this.camera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.camera.update();
-    }
-
-    public void addObjToGroup(Group group, Obj obj) {
-        this.groups.get(group).add(obj);
     }
 
     public void setPlayer(Player player) {
@@ -73,19 +42,12 @@ public class World {
     // draws collision shapes of all objects
     public void drawCollisionShapes() {
         this.shapeRenderer.setProjectionMatrix(this.camera.combined);
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         this.shapeRenderer.setColor(0f, 0.65f, 1f, 0.75f);
-        for (Obj obj : this.objects) {
+        for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
             obj.drawCollisionShape(this.shapeRenderer);
         }
         this.player.drawCollisionShape(this.shapeRenderer);
-        for (Obj obj : this.objects) {
-            if (this.player.collisionShape.colliding(obj.collisionShape)) {
-                this.shapeRenderer.setColor(0f, 1f, 1f, 1f);
-                this.player.drawCollisionShape(this.shapeRenderer);
-                this.shapeRenderer.setColor(0f, 0.65f, 1f, 0.75f);
-            }
-        }
         this.shapeRenderer.end();
     }
 
@@ -98,10 +60,10 @@ public class World {
         this.viewport.apply();
     }
 
-    public void collideCollisionGroups(Group[] groups) {
+    public void collideCollisionGroups(Groups.Types[] groups) {
         Set<CollisionShape> collisionShapes = new HashSet<>();
 
-        for (Group group : groups) {
+        for (Groups.Types group : groups) {
             collisionShapes.addAll(this.groups.get(group).collisionShapes);
         }
 

@@ -2,14 +2,16 @@ package io.game.structures;
 
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.Vector2;
+import java.util.ArrayList;
 
 public class Polygon extends Shape {
     private float[] vertices;
+    private float[] realsize;
 
     public Polygon(float[] vertices, float scale) {
         this.vertices = vertices;
         this.scale = scale;
-        this.setHighLows();
+        this.updateRealsize();
     }
 
     public static Polygon rectangle(float scale) {
@@ -29,8 +31,23 @@ public class Polygon extends Shape {
         }, scale);
     }
 
-    public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.polygon(vertices);
+    public void draw(ShapeRenderer shapeRenderer, Obj parent) {
+        float xoff = parent.pos.x - this.scale / 2;
+        float yoff = parent.pos.y - this.scale / 2;
+        float[] result = new float[this.realsize.length];
+        for (int i = 0; i < this.realsize.length; i += 2) {
+            result[i] = this.realsize[i] + xoff;
+            result[i + 1] = this.realsize[i + 1] + yoff;
+        }
+        shapeRenderer.polygon(result);
+    }
+
+    public void updateRealsize() {
+        float[] result = new float[this.vertices.length];
+        for (int i = 0; i < this.vertices.length; i++) {
+            result[i] = this.vertices[i] * this.scale;
+        }
+        this.realsize = result;
     }
 
     public boolean contains(float x, float y) {
@@ -49,5 +66,4 @@ public class Polygon extends Shape {
         }
         return false;
     }
-
 }

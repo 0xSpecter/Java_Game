@@ -6,13 +6,19 @@ import java.util.*;
 
 public class CollisionShape {
     private Shape shape;
+    private Obj parent;
 
-    public CollisionShape(Shape shape) {
+    public CollisionShape(Shape shape, Obj parent) {
         this.shape = shape;
+        this.parent = parent;
     }
 
     public boolean colliding(CollisionShape other) {
         return false;
+    }
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        this.shape.draw(shapeRenderer, this.parent);
     }
 
     private static class SweepEdge {
