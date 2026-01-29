@@ -5,62 +5,62 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
 public class Polygon extends Shape {
-    private float[] vertices;
-    private float[] realsize;
+    private Vector2[] vertices;
+    private Vector2[] realsize;
 
-    public Polygon(float[] vertices, float scale) {
+    public Polygon(Vector2[] vertices, float scale) {
         this.vertices = vertices;
         this.scale = scale;
         this.updateRealsize();
     }
 
     public static Polygon rectangle(float scale) {
-        return new Polygon(new float[] {
-                0f, 0f,
-                1f, 0f,
-                1f, 1f,
-                0f, 1f,
+        return new Polygon(new Vector2[] {
+                new Vector2(0f, 0f),
+                new Vector2(1f, 0f),
+                new Vector2(1f, 1f),
+                new Vector2(0f, 1f),
         }, scale);
     }
 
     public static Polygon triangle(float scale) {
-        return new Polygon(new float[] {
-                0.5f, 0.5f,
-                1f, 1f,
-                0f, 1f,
+        return new Polygon(new Vector2[] {
+                new Vector2(0f, 0f),
+                new Vector2(0.5f, 1f),
+                new Vector2(1f, 0f),
         }, scale);
     }
 
     public void draw(ShapeRenderer shapeRenderer, Obj parent) {
         float xoff = parent.pos.x - this.scale / 2;
         float yoff = parent.pos.y - this.scale / 2;
-        float[] result = new float[this.realsize.length];
-        for (int i = 0; i < this.realsize.length; i += 2) {
-            result[i] = this.realsize[i] + xoff;
-            result[i + 1] = this.realsize[i + 1] + yoff;
+        Vector2[] result = new Vector2[this.realsize.length];
+        for (int i = 0; i < this.realsize.length; i++) {
+            result[i] = new Vector2(this.realsize[i].x + xoff, this.realsize[i].y + yoff);
         }
-        shapeRenderer.polygon(result);
+        // render
     }
 
     public void updateRealsize() {
-        float[] result = new float[this.vertices.length];
+        Vector2[] result = new Vector2[this.vertices.length];
         for (int i = 0; i < this.vertices.length; i++) {
-            result[i] = this.vertices[i] * this.scale;
+            result[i].x = this.vertices[i].x * this.scale;
+            result[i].y = this.vertices[i].y * this.scale;
         }
         this.realsize = result;
     }
 
     public boolean contains(float x, float y) {
         int next = 0;
-        for (int current = 0; current < this.vertices.length; current += 2) {
+        for (int current = 0; current < this.vertices.length; current++) {
             next = current + 2;
             if (next == vertices.length)
                 next = 0;
 
-            float cx = this.vertices[current];
-            float cy = this.vertices[current + 1];
-            float nx = this.vertices[next];
-            float ny = this.vertices[next + 1];
+            float cx = this.vertices[current].x;
+            float cy = this.vertices[current].y;
+            float nx = this.vertices[next].x;
+            float ny = this.vertices[next].y;
 
             boolean yTest = (cy >= y && ny < y) || (cy < y && ny >= y);
         }

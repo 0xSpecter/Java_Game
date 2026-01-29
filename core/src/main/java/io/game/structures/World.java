@@ -25,7 +25,7 @@ public class World {
         this.camera.zoom = 0.2f;
         this.camera.update();
 
-        this.viewport = new FitViewport(this.worldWidth, this.worldHeight, this.camera);
+        this.viewport = new FillViewport(this.worldWidth, this.worldHeight, this.camera);
         this.viewport.apply();
     }
 
