@@ -31,21 +31,49 @@ public class Polygon extends Shape {
         }, scale);
     }
 
+    public static Polygon pentagon(float scale) {
+        return new Polygon(new Vector2[] {
+                new Vector2(0.5f, 1f),
+                new Vector2(1f, 0.65f),
+                new Vector2(0.8f, 0f),
+                new Vector2(0.2f, 0f),
+                new Vector2(0f, 0.65f),
+        }, scale);
+    }
+
     public void draw(ShapeRenderer shapeRenderer, Obj parent) {
-        float xoff = parent.pos.x - this.scale / 2;
-        float yoff = parent.pos.y - this.scale / 2;
-        Vector2[] result = new Vector2[this.realsize.length];
-        for (int i = 0; i < this.realsize.length; i++) {
-            result[i] = new Vector2(this.realsize[i].x + xoff, this.realsize[i].y + yoff);
+        Vector2 centroid = new Vector2();
+        for (Vector2 v : this.vertices) {
+            centroid.add(v);
         }
-        // render
+        centroid.scl(1f / this.vertices.length);
+        float xoff = parent.pos.x - centroid.x;
+        float yoff = parent.pos.y - centroid.y;
+        Vector2[] r = new Vector2[this.realsize.length];
+        for (int i = 0; i < this.realsize.length; i++) {
+            r[i] = new Vector2(this.realsize[i].x + xoff, this.realsize[i].y + yoff);
+        }
+        if (r.length == 3) {
+            shapeRenderer.triangle(r[0].x, r[0].y, r[1].x, r[1].y, r[2].x, r[2].y);
+        } else {
+            float cx = parent.pos.x;
+            float cy = parent.pos.y;
+            for (int i = 0; i < r.length; i++) {
+                Vector2 p1 = r[i];
+                Vector2 p2 = (i >= r.length - 1) ? r[0] : r[i + 1];
+                shapeRenderer.triangle(
+                        cx, cy,
+                        p1.x, p1.y,
+                        p2.x, p2.y);
+            }
+        }
+        shapeRenderer.circle(parent.pos.x, parent.pos.y, 5);
     }
 
     public void updateRealsize() {
-        Vector2[] result = new Vector2[this.vertices.length];
+        Vector2[] result = this.vertices.clone();
         for (int i = 0; i < this.vertices.length; i++) {
-            result[i].x = this.vertices[i].x * this.scale;
-            result[i].y = this.vertices[i].y * this.scale;
+            result[i].scl(this.scale);
         }
         this.realsize = result;
     }
