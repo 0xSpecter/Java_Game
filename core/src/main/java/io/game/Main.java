@@ -21,7 +21,7 @@ public class Main extends ApplicationAdapter {
         player = new Player(300f, 300f);
         player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f), player));
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() * 2000 - 1000));
             if (Math.random() > 0.7)
                 obj.addCollisionShape(new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10)), obj));

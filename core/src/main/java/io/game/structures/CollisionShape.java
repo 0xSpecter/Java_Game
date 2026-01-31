@@ -3,10 +3,11 @@ package io.game.structures;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class CollisionShape {
     private Shape shape;
-    private Obj parent;
+    public Obj parent;
 
     public CollisionShape(Shape shape, Obj parent) {
         this.shape = shape;
@@ -48,8 +49,8 @@ public class CollisionShape {
         Set<CollisionShape> active = new HashSet<>();
 
         for (CollisionShape pc : possibleCandidates) {
-            edges.add(new SweepEdge(-pc.shape.scale, pc, true));
-            edges.add(new SweepEdge(pc.shape.scale, pc, false));
+            edges.add(new SweepEdge(pc.parent.pos.x - pc.shape.scale, pc, true));
+            edges.add(new SweepEdge(pc.parent.pos.x + pc.shape.scale, pc, false));
         }
 
         edges.sort(Comparator.comparingDouble(SweepEdge::getValue));
@@ -69,10 +70,28 @@ public class CollisionShape {
     }
 
     public static Set<CollisionShape[]> narrow(Set<CollisionShape[]> pairedCandidates) {
-        return pairedCandidates;
-    }
+        Set<CollisionShape[]> collidingPairs = new HashSet<>();
+        for (CollisionShape[] pair : pairedCandidates) {
+            Vector2[] axesCombined = Stream
+                    .concat(Arrays.stream(pair[0].shape.normals), Arrays.stream(pair[1].shape.normals))
+                    .toArray(Vector2[]::new);
 
-    public boolean collide(CollisionShape other) {
-        return false;
+            // remove duplicate axes
+            Set<Vector2> axes = new HashSet<>(Arrays.asList(axesCombined));
+
+            boolean separated = false;
+            for (Vector2 axis : axes) {
+                float[] m1 = pair[0].shape.projection(axis, pair[0].parent);
+                float[] m2 = pair[1].shape.projection(axis, pair[1].parent);
+                if (m1[1] < m2[0] || m2[1] < m1[0]) {
+                    separated = true;
+                    break;
+                }
+            }
+            if (!separated)
+                collidingPairs.add(pair);
+        }
+
+        return collidingPairs;
     }
 }

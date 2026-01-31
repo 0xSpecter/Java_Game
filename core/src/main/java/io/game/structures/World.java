@@ -37,6 +37,7 @@ public class World {
 
     public void setPlayer(Player player) {
         this.player = player;
+        this.groups.add(Groups.Types.OBJECTS, player);
     }
 
     // draws collision shapes of all objects
@@ -49,6 +50,17 @@ public class World {
         }
         this.player.drawCollisionShape(this.shapeRenderer);
         this.shapeRenderer.end();
+
+        this.collideCollisionGroups(Groups.Types.OBJECTS);
+
+        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.shapeRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
+        for (CollisionShape[] shapes : this.collideCollisionGroups(Groups.Types.OBJECTS)) {
+            shapes[0].draw(shapeRenderer);
+            shapes[1].draw(shapeRenderer);
+        }
+        this.shapeRenderer.end();
     }
 
     public void draw() {
@@ -60,7 +72,7 @@ public class World {
         this.viewport.apply();
     }
 
-    public void collideCollisionGroups(Groups.Types[] groups) {
+    public Set<CollisionShape[]> collideCollisionGroups(Groups.Types[] groups) {
         Set<CollisionShape> collisionShapes = new HashSet<>();
 
         for (Groups.Types group : groups) {
@@ -68,6 +80,11 @@ public class World {
         }
 
         Set<CollisionShape[]> pairs = CollisionShape.sweep(collisionShapes);
+        return CollisionShape.narrow(pairs);
+    }
+
+    public Set<CollisionShape[]> collideCollisionGroups(Groups.Types groups) {
+        return this.collideCollisionGroups(new Groups.Types[] { groups });
     }
 
     public void dispose() {

@@ -6,9 +6,7 @@ import java.util.ArrayList;
 
 public class Polygon extends Shape {
     private Vector2[] vertices;
-    private Vector2[] realsize;
     private Vector2 centroid;
-    private Vector2[] normals;
     private Vector2[] normalsMidpoints;
 
     public Polygon(Vector2[] vertices, float scale) {
@@ -121,6 +119,20 @@ public class Polygon extends Shape {
         }
         this.normals = normals;
         this.normalsMidpoints = normalMidpoints;
+    }
+
+    public float[] projection(Vector2 axis, Obj parent) {
+        Vector2[] vertices = this.toWorld(this.vertices, parent);
+        float max = vertices[0].dot(axis);
+        float min = max;
+        for (Vector2 vertex : vertices) {
+            float dist = vertex.dot(axis);
+            if (dist < min)
+                min = dist;
+            if (dist > max)
+                max = dist;
+        }
+        return new float[] { min, max };
     }
 
     public boolean contains(float x, float y) {
