@@ -41,8 +41,9 @@ public class CollisionShape {
         }
     }
 
+    // broad phase collision
     public static Set<CollisionShape[]> sweep(Set<CollisionShape> possibleCandidates) {
-        Set<CollisionShape[]> pairs = new HashSet<>();
+        Set<CollisionShape[]> candidates = new HashSet<>();
         List<SweepEdge> edges = new ArrayList<>();
         Set<CollisionShape> active = new HashSet<>();
 
@@ -56,7 +57,7 @@ public class CollisionShape {
         for (SweepEdge edge : edges) {
             if (edge.isStart()) {
                 for (CollisionShape other : active) {
-                    pairs.add(new CollisionShape[] { edge.origin, other });
+                    candidates.add(new CollisionShape[] { edge.origin, other });
                 }
                 active.add(edge.origin);
             } else {
@@ -64,6 +65,14 @@ public class CollisionShape {
             }
         }
 
-        return pairs;
+        return candidates;
+    }
+
+    public static Set<CollisionShape[]> narrow(Set<CollisionShape[]> pairedCandidates) {
+        return pairedCandidates;
+    }
+
+    public boolean collide(CollisionShape other) {
+        return false;
     }
 }
