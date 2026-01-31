@@ -42,7 +42,7 @@ public class World {
     // draws collision shapes of all objects
     public void drawCollisionShapes() {
         this.shapeRenderer.setProjectionMatrix(this.camera.combined);
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         this.shapeRenderer.setColor(0f, 0.65f, 1f, 0.75f);
         for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
             obj.drawCollisionShape(this.shapeRenderer);

@@ -7,11 +7,12 @@ import java.util.ArrayList;
 public class Polygon extends Shape {
     private Vector2[] vertices;
     private Vector2[] realsize;
+    private Vector2 centroid;
 
     public Polygon(Vector2[] vertices, float scale) {
         this.vertices = vertices;
         this.scale = scale;
-        this.updateRealsize();
+        this.updateCentroid();
     }
 
     public static Polygon rectangle(float scale) {
@@ -41,18 +42,16 @@ public class Polygon extends Shape {
         }, scale);
     }
 
-    public void draw(ShapeRenderer shapeRenderer, Obj parent) {
-        Vector2 centroid = new Vector2();
+    public void updateCentroid() {
+        this.centroid = new Vector2();
         for (Vector2 v : this.vertices) {
-            centroid.add(v);
+            this.centroid.add(v);
         }
-        centroid.scl(1f / this.vertices.length);
-        float xoff = parent.pos.x - centroid.x;
-        float yoff = parent.pos.y - centroid.y;
-        Vector2[] r = new Vector2[this.realsize.length];
-        for (int i = 0; i < this.realsize.length; i++) {
-            r[i] = new Vector2(this.realsize[i].x + xoff, this.realsize[i].y + yoff);
-        }
+        this.centroid.scl(1f / this.vertices.length);
+    }
+
+    public void draw(ShapeRenderer shapeRenderer, Obj parent) {
+        Vector2[] r = this.worldVertices(parent);
         if (r.length == 3) {
             shapeRenderer.triangle(r[0].x, r[0].y, r[1].x, r[1].y, r[2].x, r[2].y);
         } else {
@@ -67,15 +66,16 @@ public class Polygon extends Shape {
                         p2.x, p2.y);
             }
         }
-        shapeRenderer.circle(parent.pos.x, parent.pos.y, 5);
     }
 
-    public void updateRealsize() {
-        Vector2[] result = this.vertices.clone();
-        for (int i = 0; i < this.vertices.length; i++) {
-            result[i].scl(this.scale);
+    public Vector2[] worldVertices(Obj parent) {
+        Vector2[] vertices = new Vector2[this.vertices.length];
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = new Vector2(
+                    (this.vertices[i].x - centroid.x) * scale + parent.pos.x,
+                    (this.vertices[i].y - centroid.y) * scale + parent.pos.y);
         }
-        this.realsize = result;
+        return vertices;
     }
 
     public boolean contains(float x, float y) {
