@@ -11,29 +11,29 @@ import io.game.structures.*;
 public class Player extends Creature {
     public Player(float x, float y) {
         super(x, y);
+        this.acceleration = 1000f;
+        this.deAcceleration = 600f;
     }
 
     public void update() {
-        float delta = Gdx.graphics.getDeltaTime();
-        float dx = 0;
-        float dy = 0;
+        Vector2 dir = new Vector2(0, 0);
 
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            dx--;
+            dir.x--;
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            dx++;
+            dir.x++;
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))
-            dy++;
+            dir.y++;
         if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            dy--;
+            dir.y--;
 
-        if (dx != 0 || dy != 0) {
-            float length = (float) Math.sqrt(dx * dx + dy * dy);
-            dx /= length;
-            dy /= length;
+        dir.nor();
+        this.moveDirection = dir.cpy();
+        if (dir.isZero())
+            this.deAccelerate();
+        else {
+            this.accelerate();
         }
-
-        this.pos.x += dx * speed * delta;
-        this.pos.y += dy * speed * delta;
+        this.move();
     }
 }

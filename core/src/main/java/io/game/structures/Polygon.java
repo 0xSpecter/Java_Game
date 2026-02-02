@@ -8,6 +8,7 @@ public class Polygon extends Shape {
     private Vector2[] vertices;
     private Vector2 centroid;
     private Vector2[] normalsMidpoints;
+    private Vector2[] normals;
 
     public Polygon(Vector2[] vertices, float scale) {
         this.vertices = vertices;
@@ -41,6 +42,23 @@ public class Polygon extends Shape {
                 new Vector2(0.2f, 0f),
                 new Vector2(0f, 0.65f),
         }, scale);
+    }
+
+    // returns the closest WORLD vertex to a world posistion
+    public Vector2 closest(Obj parent, Obj otherParent) {
+        Vector2 closest = null;
+        float minDst = Float.MAX_VALUE;
+
+        for (Vector2 vertex : this.toWorld(this.vertices, parent)) {
+            float dst = vertex.dst2(otherParent.pos);
+
+            if (dst < minDst) {
+                minDst = dst;
+                closest = vertex;
+            }
+        }
+
+        return closest;
     }
 
     public void updateCentroid() {
@@ -107,7 +125,7 @@ public class Polygon extends Shape {
             Vector2 p1 = this.vertices[i];
             Vector2 p2 = (i < this.vertices.length - 1) ? this.vertices[i + 1] : this.vertices[0];
             Vector2 diff = new Vector2(p2.x - p1.x, p2.y - p1.y);
-            Vector2 normal = new Vector2(diff.y, -diff.x);
+            Vector2 normal = new Vector2(diff.y, -diff.x).nor();
             Vector2 midpoint = new Vector2(p1.x + diff.x / 2, p1.y + diff.y / 2);
 
             if (normal.dot(new Vector2(centroid).sub(midpoint)) > 0) {
@@ -119,6 +137,10 @@ public class Polygon extends Shape {
         }
         this.normals = normals;
         this.normalsMidpoints = normalMidpoints;
+    }
+
+    public Vector2[] getNormals(Shape other, Obj otherParent, Obj parent) {
+        return this.normals;
     }
 
     public float[] projection(Vector2 axis, Obj parent) {

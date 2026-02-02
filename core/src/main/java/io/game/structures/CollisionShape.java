@@ -69,14 +69,16 @@ public class CollisionShape {
         return candidates;
     }
 
+    // :TODO: add collision data
     public static Set<CollisionShape[]> narrow(Set<CollisionShape[]> pairedCandidates) {
         Set<CollisionShape[]> collidingPairs = new HashSet<>();
         for (CollisionShape[] pair : pairedCandidates) {
-            Vector2[] axesCombined = Stream
-                    .concat(Arrays.stream(pair[0].shape.normals), Arrays.stream(pair[1].shape.normals))
+            Vector2[] axesCombined = Stream.concat(
+                    Arrays.stream(pair[0].shape.getNormals(pair[1].shape, pair[1].parent, pair[0].parent)),
+                    Arrays.stream(pair[1].shape.getNormals(pair[0].shape, pair[0].parent, pair[1].parent)))
                     .toArray(Vector2[]::new);
 
-            // remove duplicate axes
+            // remove duplicate axes, could be imporved
             Set<Vector2> axes = new HashSet<>(Arrays.asList(axesCombined));
 
             boolean separated = false;

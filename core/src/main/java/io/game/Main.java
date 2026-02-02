@@ -19,14 +19,16 @@ public class Main extends ApplicationAdapter {
     public void create() {
         world = new World();
         player = new Player(300f, 300f);
-        player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f), player));
+        player.addCollisionShape(new CollisionShape(new Circle(20f), player));
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() * 2000 - 1000));
             if (Math.random() > 0.7)
                 obj.addCollisionShape(new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10)), obj));
             else if (Math.random() > 0.7)
                 obj.addCollisionShape(new CollisionShape(Polygon.triangle((int) (Math.random() * 300 + 10)), obj));
+            else if (Math.random() > 0.8)
+                obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10)), obj));
             else
                 obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10)), obj));
             world.groups.add(Groups.Types.OBJECTS, obj);

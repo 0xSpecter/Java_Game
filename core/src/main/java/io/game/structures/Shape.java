@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.*;
 
 public abstract class Shape {
     public float scale;
-    public Vector2[] normals;
 
     public abstract void draw(ShapeRenderer shapeRenderer, Obj parent);
 
     public abstract boolean contains(float x, float y);
 
-    public abstract void updateNormals();
+    public abstract Vector2[] getNormals(Shape other, Obj otherParent, Obj parent);
+
+    public abstract Vector2 closest(Obj parent, Obj otherParent);
 
     public abstract float[] projection(Vector2 axis, Obj parent);
 }
