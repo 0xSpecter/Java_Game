@@ -1,7 +1,9 @@
-package io.game.structures;
+package delta.shapes;
 
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.*;
+
+import delta.structures.*;
 
 public abstract class Shape {
     public float scale;

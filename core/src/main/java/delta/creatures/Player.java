@@ -1,4 +1,4 @@
-package io.game.creatures;
+package delta.creatures;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import io.game.structures.*;
+import delta.structures.*;
+import delta.shapes.*;
 
 public class Player extends Creature {
     public Player(float x, float y) {

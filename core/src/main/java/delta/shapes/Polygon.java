@@ -1,8 +1,10 @@
-package io.game.structures;
+package delta.shapes;
 
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
+
+import delta.structures.*;
 
 public class Polygon extends Shape {
     private Vector2[] vertices;

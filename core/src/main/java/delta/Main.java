@@ -1,12 +1,13 @@
-package io.game;
+package delta;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import io.game.structures.*;
-import io.game.creatures.*;
+import delta.structures.*;
+import delta.creatures.*;
+import delta.shapes.*;
 
 public class Main extends ApplicationAdapter {
     private World world;

@@ -1,4 +1,4 @@
-package io.game.structures;
+package delta.structures;
 
 import java.lang.ref.SoftReference;
 import java.time.chrono.ThaiBuddhistChronology;
@@ -6,6 +6,8 @@ import java.time.chrono.ThaiBuddhistChronology;
 import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.graphics.glutils.*;
+
+import delta.shapes.*;
 
 public class Obj {
     public Vector2 pos = new Vector2(0, 0);

@@ -1,4 +1,4 @@
-package io.game.structures;
+package delta.structures;
 
 import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.*;
 
-import io.game.creatures.*;
+import delta.creatures.*;
+import delta.shapes.*;
 
 public class Groups {
     public static enum Types {

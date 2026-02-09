@@ -1,9 +1,12 @@
-package io.game.creatures;
+package delta.creatures;
 
 import io.game.structures.*;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+
+import delta.structures.*;
+import delta.shapes.*;
 
 public class Creature extends Obj {
     public float speed = 10000;

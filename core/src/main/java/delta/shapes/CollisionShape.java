@@ -1,9 +1,11 @@
-package io.game.structures;
+package delta.shapes;
 
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.*;
 import java.util.*;
 import java.util.stream.Stream;
+
+import delta.structures.*;
 
 public class CollisionShape {
     private Shape shape;
@@ -78,7 +80,7 @@ public class CollisionShape {
                     Arrays.stream(pair[1].shape.getNormals(pair[0].shape, pair[0].parent, pair[1].parent)))
                     .toArray(Vector2[]::new);
 
-            // remove duplicate axes, could be imporved
+            // :TODO: remove duplicate axes, could be imporved
             Set<Vector2> axes = new HashSet<>(Arrays.asList(axesCombined));
 
             boolean separated = false;
