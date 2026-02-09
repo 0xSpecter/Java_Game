@@ -10,10 +10,22 @@ import delta.structures.*;
 public class CollisionShape {
     private Shape shape;
     public Obj parent;
+    // if null then no collision has happend
+    public CollisionData collisionData;
+
+    public static class CollisionData {
+        private Vector2[] normals;
+        private float dist;
+
+        public CollisionData() {
+
+        }
+    }
 
     public CollisionShape(Shape shape, Obj parent) {
         this.shape = shape;
         this.parent = parent;
+        this.collisionData = null;
     }
 
     public boolean colliding(CollisionShape other) {
@@ -74,6 +86,7 @@ public class CollisionShape {
     // :TODO: add collision data
     public static Set<CollisionShape[]> narrow(Set<CollisionShape[]> pairedCandidates) {
         Set<CollisionShape[]> collidingPairs = new HashSet<>();
+
         for (CollisionShape[] pair : pairedCandidates) {
             Vector2[] axesCombined = Stream.concat(
                     Arrays.stream(pair[0].shape.getNormals(pair[1].shape, pair[1].parent, pair[0].parent)),
@@ -92,10 +105,16 @@ public class CollisionShape {
                     break;
                 }
             }
-            if (!separated)
+            if (!separated) {
+                CollisionShape.addCollisionData(pair);
                 collidingPairs.add(pair);
+            }
         }
 
         return collidingPairs;
+    }
+
+    private static void addCollisionData(CollisionShape[] pair) {
+
     }
 }

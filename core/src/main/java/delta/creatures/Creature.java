@@ -1,6 +1,5 @@
 package delta.creatures;
 
-import io.game.structures.*;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
