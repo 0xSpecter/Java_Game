@@ -58,6 +58,7 @@ public class World {
         this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         this.shapeRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
         for (CollisionShape[] shapes : this.collideCollisionGroups(Groups.Types.OBJECTS)) {
+            CollisionShape.resolveCollision(shapes[0], shapes[1], camera);
             shapes[0].draw(shapeRenderer);
             shapes[1].draw(shapeRenderer);
         }

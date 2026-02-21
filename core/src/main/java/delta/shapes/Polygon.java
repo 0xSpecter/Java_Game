@@ -47,12 +47,12 @@ public class Polygon extends Shape {
     }
 
     // returns the closest WORLD vertex to a world posistion
-    public Vector2 closest(Obj parent, Obj otherParent) {
+    public Vector2 closest(Obj parent, Vector2 pos) {
         Vector2 closest = null;
         float minDst = Float.MAX_VALUE;
 
         for (Vector2 vertex : this.toWorld(this.vertices, parent)) {
-            float dst = vertex.dst2(otherParent.pos);
+            float dst = vertex.dst2(pos);
 
             if (dst < minDst) {
                 minDst = dst;

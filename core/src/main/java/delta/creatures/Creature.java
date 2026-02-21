@@ -35,6 +35,8 @@ public class Creature extends Obj {
 
         this.velocity.sub(this.velocity.cpy().nor().scl(this.deAcceleration * delta));
         this.velocity.clamp(0, this.speed);
+        if (this.velocity.len() < 1f)
+            this.velocity.scl(0f);
     }
 
     public void move() {

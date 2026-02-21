@@ -14,7 +14,7 @@ public abstract class Shape {
 
     public abstract Vector2[] getNormals(Shape other, Obj otherParent, Obj parent);
 
-    public abstract Vector2 closest(Obj parent, Obj otherParent);
+    public abstract Vector2 closest(Obj parent, Vector2 pos);
 
     public abstract float[] projection(Vector2 axis, Obj parent);
 }
