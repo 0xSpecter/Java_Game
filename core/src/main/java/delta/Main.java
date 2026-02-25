@@ -27,10 +27,16 @@ public class Main extends ApplicationAdapter {
                 obj.addCollisionShape(new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10)), obj));
             else if (Math.random() > 0.7)
                 obj.addCollisionShape(new CollisionShape(Polygon.triangle((int) (Math.random() * 300 + 10)), obj));
-            else if (Math.random() > 0.8)
+            else if (Math.random() > 0.50)
                 obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10)), obj));
             else
                 obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10)), obj));
+            world.groups.add(Groups.Types.OBJECTS, obj);
+        }
+
+        for (int i = 0; i < 100; i++) {
+            Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() * 2000 - 1000));
+            obj.addCollisionShape(new CollisionShape(new Point(), obj));
             world.groups.add(Groups.Types.OBJECTS, obj);
         }
 

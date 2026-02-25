@@ -25,12 +25,13 @@ public abstract class Shape {
     public abstract void draw(ShapeRenderer shapeRenderer, Obj parent);
 
     /**
-     * Checks whether a local-space position lies inside the shape.
+     * Checks whether a position lies inside the shape
      *
-     * @param position position in local space
+     * @param position position
+     * @param origin   origin for comparison
      * @return true if inside (or on boundary)
      */
-    public abstract boolean contains(Vector2 position);
+    public abstract boolean contains(Vector2 position, Vector2 origin);
 
     /**
      * Returns collision normals between this shape and another.

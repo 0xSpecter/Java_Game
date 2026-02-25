@@ -96,19 +96,18 @@ public class Circle extends Shape {
     /**
      * Determines whether a given position lies inside this circle.
      * <p>
-     * The position must be in the circle's local space (i.e., relative to the
-     * circle center). If working in world space, the position should first be
-     * transformed into local coordinates.
-     * <p>
      * Uses squared distance comparison to avoid the computational cost of
      * a square root operation.
      *
-     * @param position the position in local space
-     * @return {@code true} if the position lies inside or on the boundary
-     *         of the circle, {@code false} otherwise
+     * @param position position
+     * @param origin   origin for comparison
+     * @return true if inside (or on boundary)
      */
-    public boolean contains(Vector2 position) {
-        return position.len2() <= this.scale * this.scale;
+    public boolean contains(Vector2 position, Vector2 origin) {
+        float dx = position.x - origin.x;
+        float dy = position.x - origin.x;
+
+        return dx * dx + dy * dy <= this.scale * this.scale;
     }
 
     @Override

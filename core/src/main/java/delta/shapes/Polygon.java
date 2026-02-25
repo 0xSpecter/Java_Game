@@ -168,20 +168,47 @@ public class Polygon extends Shape {
         return new float[] { min, max };
     }
 
-    public boolean contains(float x, float y) {
-        int next = 0;
-        for (int current = 0; current < this.vertices.length; current++) {
-            next = current + 2;
-            if (next == vertices.length)
-                next = 0;
+    /**
+     * Litt chata kode her som skal fikses når jeg gidder å forstå algoen, ikke så
+     * ille tydligvis men ennå komplisert som jeg helst vil vente med / ikke røre nå
+     * Determines whether a point lies inside this polygon using the
+     * ray-casting (even–odd rule) algorithm.
+     * <p>
+     * A horizontal ray is cast to the right from the given point. Each time
+     * the ray intersects an edge of the polygon, the inside state toggles.
+     * If the number of intersections is odd, the point is inside. If even,
+     * the point is outside.
+     * <p>
+     * This method runs in O(n) time and does not allocate additional memory.
+     * Works for both convex and concave simple polygons.
+     *
+     * @param position the point to test (in the same coordinate space as vertices)
+     * @return {@code true} if the point is inside the polygon, {@code false}
+     *         otherwise
+     */
+    @Override
+    public boolean contains(Vector2 position, Vector2 origin) {
+        final float x = position.x;
+        final float y = position.y;
 
-            float cx = this.vertices[current].x;
-            float cy = this.vertices[current].y;
-            float nx = this.vertices[next].x;
-            float ny = this.vertices[next].y;
+        final Vector2[] verts = this.vertices;
+        final int count = verts.length;
 
-            boolean yTest = (cy >= y && ny < y) || (cy < y && ny >= y);
+        boolean inside = false;
+
+        for (int i = 0, j = count - 1; i < count; j = i++) {
+            float xi = verts[i].x;
+            float yi = verts[i].y;
+            float xj = verts[j].x;
+            float yj = verts[j].y;
+
+            boolean intersects = ((yi > y) != (yj > y)) &&
+                    (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+            if (intersects)
+                inside = !inside;
         }
-        return false;
+
+        return inside;
     }
 }

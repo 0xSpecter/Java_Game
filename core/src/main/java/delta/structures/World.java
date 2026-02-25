@@ -28,6 +28,8 @@ public class World {
     Input input = new Input();
 
     public World() {
+        Gdx.input.setInputProcessor(this.input);
+
         this.camera.setToOrtho(false, this.worldWidth, this.worldHeight);
         this.camera.zoom = 0.2f;
         this.camera.update();
@@ -40,6 +42,7 @@ public class World {
         this.player.update();
         this.camera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.camera.update();
+        Input.updateMouseWorldPosition(this.camera);
     }
 
     public void setPlayer(Player player) {
@@ -58,8 +61,6 @@ public class World {
         this.player.drawCollisionShape(this.shapeRenderer);
         this.shapeRenderer.end();
 
-        this.collideCollisionGroups(Groups.Types.OBJECTS);
-
         this.shapeRenderer.setProjectionMatrix(this.camera.combined);
         this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         this.shapeRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
@@ -68,6 +69,12 @@ public class World {
             shapes[0].draw(shapeRenderer);
             shapes[1].draw(shapeRenderer);
         }
+        this.shapeRenderer.end();
+
+        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.shapeRenderer.setColor(0f, 1f, 0.3f, 0.75f);
+        // mouse stuff
         this.shapeRenderer.end();
     }
 
@@ -93,6 +100,21 @@ public class World {
 
     public Set<CollisionShape[]> collideCollisionGroups(Groups.Types groups) {
         return this.collideCollisionGroups(new Groups.Types[] { groups });
+    }
+
+    public Set<CollisionShape[]> collideOneToMany(CollisionShape one, Groups.Types[] groups) {
+        Set<CollisionShape> collisionShapes = new HashSet<>();
+
+        for (Groups.Types group : groups) {
+            collisionShapes.addAll(this.groups.get(group).collisionShapes);
+        }
+
+        Set<CollisionShape[]> pairs = CollisionShape.sweepOneToMany(one, collisionShapes);
+        return CollisionShape.narrow(pairs);
+    }
+
+    public Set<CollisionShape[]> collideOneToMany(CollisionShape one, Groups.Types groups) {
+        return this.collideOneToMany(one, new Groups.Types[] { groups });
     }
 
     public void dispose() {

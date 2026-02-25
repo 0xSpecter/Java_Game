@@ -90,6 +90,45 @@ public class CollisionShape {
         return candidates;
     }
 
+    public static Set<CollisionShape[]> sweepOneToMany(CollisionShape one, Set<CollisionShape> possibleCandidates) {
+        Set<CollisionShape[]> candidates = new HashSet<>();
+        List<SweepEdge> edges = new ArrayList<>();
+        Set<CollisionShape> backlog = new HashSet<>();
+        boolean active = false;
+
+        for (CollisionShape pc : possibleCandidates) {
+            edges.add(new SweepEdge(pc.parent.pos.x - pc.shape.scale, pc, true));
+            edges.add(new SweepEdge(pc.parent.pos.x + pc.shape.scale, pc, false));
+        }
+        edges.add(new SweepEdge(one.parent.pos.x - one.shape.scale, one, true));
+        edges.add(new SweepEdge(one.parent.pos.x + one.shape.scale, one, false));
+
+        edges.sort(Comparator.comparingDouble(SweepEdge::getValue));
+
+        for (SweepEdge edge : edges) {
+            if (edge.origin == one) {
+                if (edge.isStart()) {
+                    active = true;
+                    for (CollisionShape shape : backlog) {
+                        candidates.add(new CollisionShape[] { shape, one });
+                    }
+                } else
+                    break;
+            }
+            if (edge.isStart()) {
+                if (active) {
+                    candidates.add(new CollisionShape[] { edge.origin, one });
+                } else {
+                    backlog.add(edge.origin);
+                }
+            } else {
+                backlog.remove(edge.origin);
+            }
+        }
+
+        return candidates;
+    }
+
     public static Set<CollisionShape[]> narrow(Set<CollisionShape[]> pairedCandidates) {
         Set<CollisionShape[]> collidingPairs = new HashSet<>();
 
@@ -158,10 +197,13 @@ public class CollisionShape {
     }
 
     public boolean contains(Vector2 position) {
-        return this.shape.contains(position);
+        return this.shape.contains(position, this.parent.pos);
     }
 
-    public boolean mouseOver() {
-        return this.contains(Input.mousePosition);
+    /**
+     * checks if the mouse is hovering the collision shape
+     */
+    public boolean mouseHovering() {
+        return this.contains(Input.mouseWorldPosition);
     }
 }
