@@ -3,7 +3,10 @@ package delta.structures;
 import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
+import com.badlogic.gdx.input.RemoteSender;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.viewport.*;
 
 import delta.creatures.*;
@@ -20,6 +23,9 @@ public class World {
 
     // renderers
     ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    // input
+    Input input = new Input();
 
     public World() {
         this.camera.setToOrtho(false, this.worldWidth, this.worldHeight);

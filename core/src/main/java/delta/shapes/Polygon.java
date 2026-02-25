@@ -1,6 +1,7 @@
 package delta.shapes;
 
 import com.badlogic.gdx.graphics.glutils.*;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
@@ -44,6 +45,14 @@ public class Polygon extends Shape {
                 new Vector2(0.2f, 0f),
                 new Vector2(0f, 0.65f),
         }, scale);
+    }
+
+    public void rotate(Matrix3 rotationMatrix) {
+        for (Vector2 vertex : this.vertices) {
+            vertex.mul(rotationMatrix);
+        }
+        this.updateCentroid();
+        this.updateNormals();
     }
 
     // returns the closest WORLD vertex to a world posistion

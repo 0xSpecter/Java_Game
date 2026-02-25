@@ -10,8 +10,9 @@ import delta.Utils;
 import delta.structures.*;
 
 public class CollisionShape {
-    private Shape shape;
-    // used to resolve a collision and create a manifold
+    /** shape which is used */
+    public Shape shape;
+    /** used to resolve a collision and create a manifold */
     private CollisionData data;
     public Obj parent;
 
@@ -154,5 +155,13 @@ public class CollisionShape {
 
         o1.data = null;
         o2.data = null;
+    }
+
+    public boolean contains(Vector2 position) {
+        return this.shape.contains(position);
+    }
+
+    public boolean mouseOver() {
+        return this.contains(Input.mousePosition);
     }
 }
