@@ -4,6 +4,9 @@ import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.input.RemoteSender;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
@@ -13,36 +16,39 @@ import delta.creatures.*;
 import delta.shapes.*;
 
 public class World {
-    public OrthographicCamera camera = new OrthographicCamera();
     private float worldWidth = 8000;
     private float worldHeight = 8000;
-    public Viewport viewport;
+
+    public Ui ui;
 
     private Player player;
     public Groups groups = new Groups();
 
     // renderers
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    ShapeRenderer worldRenderer = new ShapeRenderer();
 
-    // input
-    Input input = new Input();
+    // viewports and cameras
+    public OrthographicCamera worldCamera;
+    public Viewport worldViewport;
 
     public World() {
-        Gdx.input.setInputProcessor(this.input);
+        this.ui = new Ui(this.worldWidth, this.worldHeight);
+        this.worldCamera = new OrthographicCamera();
 
-        this.camera.setToOrtho(false, this.worldWidth, this.worldHeight);
-        this.camera.zoom = 0.2f;
-        this.camera.update();
+        this.worldCamera.setToOrtho(false, this.worldWidth, this.worldHeight);
+        this.worldCamera.zoom = 0.2f;
+        this.worldCamera.update();
 
-        this.viewport = new FillViewport(this.worldWidth, this.worldHeight, this.camera);
-        this.viewport.apply();
+        this.worldViewport = new FillViewport(this.worldWidth, this.worldHeight, this.worldCamera);
+        this.worldViewport.apply();
     }
 
     public void update() {
+        Input.updateMouseWorldPosition(this.worldViewport);
+        this.ui.update();
         this.player.update();
-        this.camera.position.set(this.player.pos.x, this.player.pos.y, 0);
-        this.camera.update();
-        Input.updateMouseWorldPosition(this.camera);
+        this.worldCamera.position.set(this.player.pos.x, this.player.pos.y, 0);
+        this.worldCamera.update();
     }
 
     public void setPlayer(Player player) {
@@ -52,30 +58,36 @@ public class World {
 
     // draws collision shapes of all objects
     public void drawCollisionShapes() {
-        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        this.shapeRenderer.setColor(0f, 0.65f, 1f, 0.75f);
+        this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
+
+        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.worldRenderer.setColor(0f, 0.65f, 1f, 0.75f);
         for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
-            obj.drawCollisionShape(this.shapeRenderer);
+            obj.drawCollisionShape(this.worldRenderer);
         }
-        this.player.drawCollisionShape(this.shapeRenderer);
-        this.shapeRenderer.end();
+        this.player.drawCollisionShape(this.worldRenderer);
+        this.worldRenderer.end();
 
-        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        this.shapeRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
+        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.worldRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
         for (CollisionShape[] shapes : this.collideCollisionGroups(Groups.Types.OBJECTS)) {
-            CollisionShape.resolveCollision(shapes[0], shapes[1], camera);
-            shapes[0].draw(shapeRenderer);
-            shapes[1].draw(shapeRenderer);
+            CollisionShape.resolveCollision(shapes[0], shapes[1], worldCamera);
+            shapes[0].draw(worldRenderer);
+            shapes[1].draw(worldRenderer);
         }
-        this.shapeRenderer.end();
+        this.worldRenderer.end();
 
-        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        this.shapeRenderer.setColor(0f, 1f, 0.3f, 0.75f);
-        // mouse stuff
-        this.shapeRenderer.end();
+        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.worldRenderer.setColor(1f, 0f, 0.0f, 1f);
+        this.worldRenderer.circle(Input.mouseWorldPosition.x, Input.mouseWorldPosition.y, 5);
+
+        this.worldRenderer.setColor(0f, 1f, 0.3f, 0.75f);
+        for (CollisionShape shape : this.groups.get(Groups.Types.OBJECTS).collisionShapes) {
+            if (shape.contains(Input.mouseWorldPosition)) {
+                shape.draw(worldRenderer);
+            }
+        }
+        this.worldRenderer.end();
     }
 
     public void draw() {
@@ -83,8 +95,8 @@ public class World {
     }
 
     public void resize(int width, int height) {
-        this.viewport.update(width, height);
-        this.viewport.apply();
+        this.worldViewport.update(width, height);
+        this.worldViewport.apply();
     }
 
     public Set<CollisionShape[]> collideCollisionGroups(Groups.Types[] groups) {
@@ -118,6 +130,7 @@ public class World {
     }
 
     public void dispose() {
-        this.shapeRenderer.dispose();
+        this.worldRenderer.dispose();
+        this.ui.dispose();
     }
 }

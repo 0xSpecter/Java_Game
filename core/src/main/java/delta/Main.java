@@ -11,12 +11,16 @@ import delta.shapes.*;
 
 public class Main extends ApplicationAdapter {
     private World world;
+    private Input input;
     private Player player;
 
     @Override
     public void create() {
         world = new World();
-        player = new Player(300f, 300f);
+        input = new Input();
+        Gdx.input.setInputProcessor(this.input);
+
+        player = new Player(0f, 0f);
         player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f), player));
 
         for (int i = 0; i < 30; i++) {
@@ -31,12 +35,6 @@ public class Main extends ApplicationAdapter {
                 obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10)), obj));
             else
                 obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10)), obj));
-            world.groups.add(Groups.Types.OBJECTS, obj);
-        }
-
-        for (int i = 0; i < 100; i++) {
-            Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() * 2000 - 1000));
-            obj.addCollisionShape(new CollisionShape(new Point(), obj));
             world.groups.add(Groups.Types.OBJECTS, obj);
         }
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
+import com.badlogic.gdx.math.MathUtils;
 
 import delta.structures.*;
 
@@ -45,6 +46,17 @@ public class Polygon extends Shape {
                 new Vector2(0.2f, 0f),
                 new Vector2(0f, 0.65f),
         }, scale);
+    }
+
+    // :TODO:
+    // needs to be centered on 0.5, 0.5 so kinda wacky
+    public static Polygon rndConvexPolygon(float scale, int verticesCount, float[] minmax) {
+        Vector2[] vertices = new Vector2[verticesCount];
+        for (int i = 0; i < verticesCount; i++) {
+
+        }
+
+        return new Polygon(vertices, scale);
     }
 
     public void rotate(Matrix3 rotationMatrix) {
@@ -187,26 +199,21 @@ public class Polygon extends Shape {
      *         otherwise
      */
     @Override
-    public boolean contains(Vector2 position, Vector2 origin) {
-        final float x = position.x;
-        final float y = position.y;
-
-        final Vector2[] verts = this.vertices;
-        final int count = verts.length;
-
+    public boolean contains(Vector2 point) {
         boolean inside = false;
 
+        int count = vertices.length;
+
         for (int i = 0, j = count - 1; i < count; j = i++) {
-            float xi = verts[i].x;
-            float yi = verts[i].y;
-            float xj = verts[j].x;
-            float yj = verts[j].y;
+            Vector2 vi = vertices[i];
+            Vector2 vj = vertices[j];
 
-            boolean intersects = ((yi > y) != (yj > y)) &&
-                    (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            boolean intersect = ((vi.y > point.y) != (vj.y > point.y)) &&
+                    (point.x < (vj.x - vi.x) * (point.y - vi.y) / (vj.y - vi.y) + vi.x);
 
-            if (intersects)
+            if (intersect) {
                 inside = !inside;
+            }
         }
 
         return inside;

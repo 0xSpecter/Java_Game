@@ -28,10 +28,9 @@ public abstract class Shape {
      * Checks whether a position lies inside the shape
      *
      * @param position position
-     * @param origin   origin for comparison
      * @return true if inside (or on boundary)
      */
-    public abstract boolean contains(Vector2 position, Vector2 origin);
+    public abstract boolean contains(Vector2 position);
 
     /**
      * Returns collision normals between this shape and another.

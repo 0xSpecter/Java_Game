@@ -17,6 +17,6 @@ public class Interactable extends Element {
     }
 
     public void update() {
-        this.collisionShape.
+        this.hovered = this.collisionShape.contains(Input.mouseUiPosition);
     }
 }

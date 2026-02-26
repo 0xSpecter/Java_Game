@@ -192,18 +192,11 @@ public class CollisionShape {
         Utils.debugDrawPoint(camera, c1, 5);
         Utils.debugDrawPoint(camera, c2, 5);
 
-        o1.data = null;
-        o2.data = null;
+        // o1.data = null;
+        // o2.data = null;
     }
 
     public boolean contains(Vector2 position) {
-        return this.shape.contains(position, this.parent.pos);
-    }
-
-    /**
-     * checks if the mouse is hovering the collision shape
-     */
-    public boolean mouseHovering() {
-        return this.contains(Input.mouseWorldPosition);
+        return this.shape.contains(new Vector2(position).sub(this.parent.pos));
     }
 }

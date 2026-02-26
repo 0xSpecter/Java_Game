@@ -100,14 +100,10 @@ public class Circle extends Shape {
      * a square root operation.
      *
      * @param position position
-     * @param origin   origin for comparison
      * @return true if inside (or on boundary)
      */
-    public boolean contains(Vector2 position, Vector2 origin) {
-        float dx = position.x - origin.x;
-        float dy = position.x - origin.x;
-
-        return dx * dx + dy * dy <= this.scale * this.scale;
+    public boolean contains(Vector2 position) {
+        return position.len2() <= this.scale * this.scale;
     }
 
     @Override
