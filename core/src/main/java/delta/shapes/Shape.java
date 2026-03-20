@@ -15,6 +15,7 @@ public abstract class Shape {
      * Uniform scale value
      */
     public float scale;
+    public Obj parent;
 
     /**
      * Renders the shape.
@@ -22,7 +23,7 @@ public abstract class Shape {
      * @param shapeRenderer renderer used for drawing
      * @param parent        object providing world position/transform
      */
-    public abstract void draw(ShapeRenderer shapeRenderer, Obj parent);
+    public abstract void draw(ShapeRenderer shapeRenderer);
 
     /**
      * Checks whether a position lies inside the shape
@@ -40,7 +41,7 @@ public abstract class Shape {
      * @param parent      parent of this shape
      * @return array of candidate separating axes
      */
-    public abstract Vector2[] getNormals(Shape other, Obj otherParent, Obj parent);
+    public abstract Vector2[] getNormals(Shape other);
 
     /**
      * Returns the closest point on this shape to a given world-space position.
@@ -49,7 +50,7 @@ public abstract class Shape {
      * @param pos    target world-space position
      * @return closest point on the shape
      */
-    public abstract Vector2 closest(Obj parent, Vector2 pos);
+    public abstract Vector2 closest(Vector2 pos);
 
     /**
      * Projects the shape onto the given axis
@@ -58,7 +59,7 @@ public abstract class Shape {
      * @param parent parent providing world position
      * @return float[2] where index 0 = min, index 1 = max
      */
-    public abstract float[] projection(Vector2 axis, Obj parent);
+    public abstract float[] projection(Vector2 axis);
 
     /**
      * Applies a rotation transform to the shape.

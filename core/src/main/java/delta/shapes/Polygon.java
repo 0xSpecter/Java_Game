@@ -14,49 +14,50 @@ public class Polygon extends Shape {
     private Vector2[] normalsMidpoints;
     private Vector2[] normals;
 
-    public Polygon(Vector2[] vertices, float scale) {
+    public Polygon(Vector2[] vertices, float scale, Obj parent) {
         this.vertices = vertices;
+        this.parent = parent;
         this.scale = scale;
         this.updateCentroid();
         this.updateNormals();
     }
 
-    public static Polygon rectangle(float scale) {
+    public static Polygon rectangle(float scale, Obj parent) {
         return new Polygon(new Vector2[] {
                 new Vector2(0f, 0f),
                 new Vector2(1f, 0f),
                 new Vector2(1f, 1f),
                 new Vector2(0f, 1f),
-        }, scale);
+        }, scale, parent);
     }
 
-    public static Polygon triangle(float scale) {
+    public static Polygon triangle(float scale, Obj parent) {
         return new Polygon(new Vector2[] {
                 new Vector2(0f, 0f),
                 new Vector2(0.5f, 1f),
                 new Vector2(1f, 0f),
-        }, scale);
+        }, scale, parent);
     }
 
-    public static Polygon pentagon(float scale) {
+    public static Polygon pentagon(float scale, Obj parent) {
         return new Polygon(new Vector2[] {
                 new Vector2(0.5f, 1f),
                 new Vector2(1f, 0.65f),
                 new Vector2(0.8f, 0f),
                 new Vector2(0.2f, 0f),
                 new Vector2(0f, 0.65f),
-        }, scale);
+        }, scale, parent);
     }
 
     // :TODO:
     // needs to be centered on 0.5, 0.5 so kinda wacky
-    public static Polygon rndConvexPolygon(float scale, int verticesCount, float[] minmax) {
+    public static Polygon rndConvexPolygon(float scale, int verticesCount, float[] minmax, Obj parent) {
         Vector2[] vertices = new Vector2[verticesCount];
         for (int i = 0; i < verticesCount; i++) {
 
         }
 
-        return new Polygon(vertices, scale);
+        return new Polygon(vertices, scale, parent);
     }
 
     public void rotate(Matrix3 rotationMatrix) {
@@ -68,11 +69,11 @@ public class Polygon extends Shape {
     }
 
     // returns the closest WORLD vertex to a world posistion
-    public Vector2 closest(Obj parent, Vector2 pos) {
+    public Vector2 closest(Vector2 pos) {
         Vector2 closest = null;
         float minDst = Float.MAX_VALUE;
 
-        for (Vector2 vertex : this.toWorld(this.vertices, parent)) {
+        for (Vector2 vertex : this.toWorld(this.vertices)) {
             float dst = vertex.dst2(pos);
 
             if (dst < minDst) {
@@ -92,14 +93,14 @@ public class Polygon extends Shape {
         this.centroid.scl(1f / this.vertices.length);
     }
 
-    public void draw(ShapeRenderer shapeRenderer, Obj parent) {
-        Vector2[] r = this.toWorld(this.vertices, parent);
+    public void draw(ShapeRenderer shapeRenderer) {
+        Vector2[] r = this.toWorld(this.vertices);
 
         if (r.length == 3) {
             shapeRenderer.triangle(r[0].x, r[0].y, r[1].x, r[1].y, r[2].x, r[2].y);
         } else {
-            float cx = parent.pos.x;
-            float cy = parent.pos.y;
+            float cx = this.parent.pos.x;
+            float cy = this.parent.pos.y;
             for (int i = 0; i < r.length; i++) {
                 Vector2 p1 = r[i];
                 Vector2 p2 = (i >= r.length - 1) ? r[0] : r[i + 1];
@@ -110,11 +111,11 @@ public class Polygon extends Shape {
             }
         }
 
-        this.drawNormals(shapeRenderer, parent);
+        this.drawNormals(shapeRenderer);
     }
 
-    public void drawNormals(ShapeRenderer shapeRenderer, Obj parent) {
-        Vector2[] m = this.toWorld(this.normalsMidpoints, parent);
+    public void drawNormals(ShapeRenderer shapeRenderer) {
+        Vector2[] m = this.toWorld(this.normalsMidpoints);
 
         for (int i = 0; i < normals.length; i++) {
             Vector2 dir = new Vector2(normals[i]).scl(20f);
@@ -131,12 +132,12 @@ public class Polygon extends Shape {
         }
     }
 
-    public Vector2[] toWorld(Vector2[] vertices, Obj parent) {
+    public Vector2[] toWorld(Vector2[] vertices) {
         Vector2[] worldVertices = new Vector2[vertices.length];
         for (int i = 0; i < worldVertices.length; i++) {
             worldVertices[i] = new Vector2(
-                    (vertices[i].x - centroid.x) * scale + parent.pos.x,
-                    (vertices[i].y - centroid.y) * scale + parent.pos.y);
+                    (vertices[i].x - centroid.x) * scale + this.parent.pos.x,
+                    (vertices[i].y - centroid.y) * scale + this.parent.pos.y);
         }
         return worldVertices;
     }
@@ -162,12 +163,12 @@ public class Polygon extends Shape {
         this.normalsMidpoints = normalMidpoints;
     }
 
-    public Vector2[] getNormals(Shape other, Obj otherParent, Obj parent) {
+    public Vector2[] getNormals(Shape other) {
         return this.normals;
     }
 
-    public float[] projection(Vector2 axis, Obj parent) {
-        Vector2[] vertices = this.toWorld(this.vertices, parent);
+    public float[] projection(Vector2 axis) {
+        Vector2[] vertices = this.toWorld(this.vertices);
         float max = vertices[0].dot(axis);
         float min = max;
         for (Vector2 vertex : vertices) {
@@ -181,41 +182,16 @@ public class Polygon extends Shape {
     }
 
     /**
-     * Litt chata kode her som skal fikses når jeg gidder å forstå algoen, ikke så
-     * ille tydligvis men ennå komplisert som jeg helst vil vente med / ikke røre nå
-     * Determines whether a point lies inside this polygon using the
-     * ray-casting (even–odd rule) algorithm.
-     * <p>
-     * A horizontal ray is cast to the right from the given point. Each time
-     * the ray intersects an edge of the polygon, the inside state toggles.
-     * If the number of intersections is odd, the point is inside. If even,
-     * the point is outside.
-     * <p>
-     * This method runs in O(n) time and does not allocate additional memory.
-     * Works for both convex and concave simple polygons.
-     *
-     * @param position the point to test (in the same coordinate space as vertices)
-     * @return {@code true} if the point is inside the polygon, {@code false}
-     *         otherwise
      */
     @Override
     public boolean contains(Vector2 point) {
-        boolean inside = false;
-
-        int count = vertices.length;
-
-        for (int i = 0, j = count - 1; i < count; j = i++) {
-            Vector2 vi = vertices[i];
-            Vector2 vj = vertices[j];
-
-            boolean intersect = ((vi.y > point.y) != (vj.y > point.y)) &&
-                    (point.x < (vj.x - vi.x) * (point.y - vi.y) / (vj.y - vi.y) + vi.x);
-
-            if (intersect) {
-                inside = !inside;
-            }
+        float minX = this.parent.pos.x - scale / 2;
+        float maxX = this.parent.pos.x + scale / 2;
+        float minY = this.parent.pos.y - scale / 2;
+        float maxY = this.parent.pos.y + scale / 2;
+        if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
+            return false;
         }
-
-        return inside;
+        return true;
     }
 }

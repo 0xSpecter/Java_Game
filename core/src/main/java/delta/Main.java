@@ -21,20 +21,21 @@ public class Main extends ApplicationAdapter {
         Gdx.input.setInputProcessor(this.input);
 
         player = new Player(0f, 0f);
-        player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f), player));
+        player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
 
         for (int i = 0; i < 30; i++) {
             // Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() *
             // 2000 - 1000));
             Obj obj = new Obj((int) i * 1000, (int) 100f);
             if (Math.random() > 0.7)
-                obj.addCollisionShape(new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10)), obj));
+                obj.addCollisionShape(
+                        new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10), obj), obj));
             else if (Math.random() > 0.7)
-                obj.addCollisionShape(new CollisionShape(Polygon.triangle((int) (Math.random() * 300 + 10)), obj));
+                obj.addCollisionShape(new CollisionShape(Polygon.triangle((int) (Math.random() * 300 + 10), obj), obj));
             else if (Math.random() > 0.50)
-                obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10)), obj));
+                obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10), obj), obj));
             else
-                obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10)), obj));
+                obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10), obj), obj));
             world.groups.add(Groups.Types.OBJECTS, obj);
         }
 

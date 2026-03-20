@@ -40,7 +40,7 @@ public class CollisionShape {
     }
 
     public void draw(ShapeRenderer shapeRenderer) {
-        this.shape.draw(shapeRenderer, this.parent);
+        this.shape.draw(shapeRenderer);
     }
 
     private static class SweepEdge {
@@ -134,8 +134,8 @@ public class CollisionShape {
 
         for (CollisionShape[] pair : pairedCandidates) {
             Vector2[] axesCombined = Stream.concat(
-                    Arrays.stream(pair[0].shape.getNormals(pair[1].shape, pair[1].parent, pair[0].parent)),
-                    Arrays.stream(pair[1].shape.getNormals(pair[0].shape, pair[0].parent, pair[1].parent)))
+                    Arrays.stream(pair[0].shape.getNormals(pair[1].shape)),
+                    Arrays.stream(pair[1].shape.getNormals(pair[0].shape)))
                     .toArray(Vector2[]::new);
 
             // :TODO: remove duplicate axes, could be imporved
@@ -144,8 +144,8 @@ public class CollisionShape {
             boolean separated = false;
             CollisionData data = new CollisionData();
             for (Vector2 axis : axes) {
-                float[] m1 = pair[0].shape.projection(axis, pair[0].parent);
-                float[] m2 = pair[1].shape.projection(axis, pair[1].parent);
+                float[] m1 = pair[0].shape.projection(axis);
+                float[] m2 = pair[1].shape.projection(axis);
 
                 float left = m2[1] - m1[0];
                 float right = m1[1] - m2[0];
@@ -186,8 +186,8 @@ public class CollisionShape {
         Utils.debugDrawVector(camera, mtv1, o1.parent.pos);
         Utils.debugDrawVector(camera, mtv2, o2.parent.pos);
 
-        Vector2 c1 = o1.shape.closest(o1.parent, o2.parent.pos);
-        Vector2 c2 = o2.shape.closest(o2.parent, o1.parent.pos);
+        Vector2 c1 = o1.shape.closest(o2.parent.pos);
+        Vector2 c2 = o2.shape.closest(o1.parent.pos);
 
         Utils.debugDrawPoint(camera, c1, 5);
         Utils.debugDrawPoint(camera, c2, 5);
@@ -197,6 +197,6 @@ public class CollisionShape {
     }
 
     public boolean contains(Vector2 position) {
-        return this.shape.contains(new Vector2(position).sub(this.parent.pos));
+        return this.shape.contains(position);
     }
 }

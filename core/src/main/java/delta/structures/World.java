@@ -81,7 +81,7 @@ public class World {
         this.worldRenderer.setColor(1f, 0f, 0.0f, 1f);
         this.worldRenderer.circle(Input.mouseWorldPosition.x, Input.mouseWorldPosition.y, 5);
 
-        this.worldRenderer.setColor(0f, 1f, 0.3f, 0.75f);
+        this.worldRenderer.setColor(0f, 1f, 0.3f, 1f);
         for (CollisionShape shape : this.groups.get(Groups.Types.OBJECTS).collisionShapes) {
             if (shape.contains(Input.mouseWorldPosition)) {
                 shape.draw(worldRenderer);

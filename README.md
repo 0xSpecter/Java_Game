@@ -11,3 +11,24 @@
 ## Todo
 
 [Implement spatial hashing](https://matthias-research.github.io/pages/tenMinutePhysics/11-hashing.pdf)
+
+## Goals of game
+2d auto targeting top down shooter
+
+### Player abilities
++ **Slash**: used to finish off enemies
++ **Std Gun**: used to remove shields, sidegrades / upgrades?
++ **Dash**: fast dash that makes you invonarable while active
++ **Parry**: block that prevents meele damage and stuns enemy and or remove shields
+
+### Enemies
+* **Grunt**: one hit by slash or a few bullets, attacks if you get close with a sword
+* **Soldier**: one hit by slash or a few bullets, tho more then **grunt**. attacks with a rifle and short - medium range
+* **Assult**: shielded enemy that requires shooting or alt means to remove shields before killing, stuned on shield remove, same hp as **Soldier**. slow medium range attack with more damage, will meele at close range if not stunned.
+* **Uber Soldier**: makes an ememy invonarable while alive, same hp as **Grunt**, no attacks unless no other enemies, then slow low dmg meele. can spawn version that makes all enemies invonarable.
+* **Warrior**: meele unit that charges a dash attack simuler to **Slash**, parry to block
+
+### Other
+- **Power station**: usable by you and enemies to to a supercharged attack, destroyed when used by player, on global cooldown for enemies to used with random cooldown time
+- **Wall**: blocks shots and targeting, but does not block vision
+

@@ -16,8 +16,9 @@ public class Circle extends Shape {
      *
      * @param scale the radius of the circle
      */
-    public Circle(float scale) {
+    public Circle(float scale, Obj parent) {
         this.scale = scale;
+        this.parent = parent;
     }
 
     /**
@@ -26,8 +27,8 @@ public class Circle extends Shape {
      * @param shapeRenderer the renderer used for drawing
      * @param parent        the parent object that provides the world position
      */
-    public void draw(ShapeRenderer shapeRenderer, Obj parent) {
-        shapeRenderer.circle(parent.pos.x, parent.pos.y, scale);
+    public void draw(ShapeRenderer shapeRenderer) {
+        shapeRenderer.circle(this.parent.pos.x, this.parent.pos.y, scale);
     }
 
     /**
@@ -41,9 +42,9 @@ public class Circle extends Shape {
      * @param parent      the parent of this circle
      * @return an array containing the single collision normal vector
      */
-    public Vector2[] getNormals(Shape other, Obj otherParent, Obj parent) {
+    public Vector2[] getNormals(Shape other) {
         return new Vector2[] {
-                other.closest(otherParent, parent.pos).sub(parent.pos).nor()
+                other.closest(other.parent.pos).sub(this.parent.pos).nor()
         };
     }
 
@@ -54,9 +55,9 @@ public class Circle extends Shape {
      * @param pos    the target position in world space
      * @return the closest point on the circle's boundary
      */
-    public Vector2 closest(Obj parent, Vector2 pos) {
-        Vector2 dir = new Vector2(pos).sub(parent.pos).nor();
-        return new Vector2(parent.pos).add(dir.scl(this.scale));
+    public Vector2 closest(Vector2 pos) {
+        Vector2 dir = new Vector2(this.parent.pos).sub(pos).nor();
+        return new Vector2(pos).add(dir.scl(this.scale));
     }
 
     /**
@@ -74,8 +75,8 @@ public class Circle extends Shape {
      *         <li>index 1 = maximum projection value</li>
      *         </ul>
      */
-    public float[] projection(Vector2 axis, Obj parent) {
-        float centerProjection = parent.pos.dot(axis);
+    public float[] projection(Vector2 axis) {
+        float centerProjection = this.parent.pos.dot(axis);
         return new float[] {
                 centerProjection - this.scale,
                 centerProjection + this.scale,
@@ -103,7 +104,7 @@ public class Circle extends Shape {
      * @return true if inside (or on boundary)
      */
     public boolean contains(Vector2 position) {
-        return position.len2() <= this.scale * this.scale;
+        return new Vector2(position).sub(this.parent.pos).len2() <= this.scale * this.scale;
     }
 
     @Override
