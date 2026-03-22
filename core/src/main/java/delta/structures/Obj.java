@@ -16,8 +16,13 @@ import delta.shapes.*;
 public class Obj {
     public Vector2 pos = new Vector2(0, 0);
     public CollisionShape collisionShape = null;
+    public Figure figure = null;
 
     public Obj() {
+    }
+
+    public Obj(Vector2 pos) {
+        this.pos.set(pos);
     }
 
     public Obj(float x, float y) {
@@ -33,5 +38,15 @@ public class Obj {
 
     public void addCollisionShape(CollisionShape shape) {
         this.collisionShape = shape;
+    }
+
+    public void drawFigure(ShapeRenderer shapeRenderer) {
+        if (this.figure != null) {
+            this.figure.draw(shapeRenderer);
+        }
+    }
+
+    public void setFigure(Figure figure) {
+        this.figure = figure;
     }
 }

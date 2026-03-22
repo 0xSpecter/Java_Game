@@ -1,8 +1,13 @@
 package delta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import delta.structures.*;
@@ -22,6 +27,14 @@ public class Main extends ApplicationAdapter {
 
         player = new Player(0f, 0f);
         player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
+
+        player.setFigure(new Figure(new ArrayList<>(Arrays.asList(
+                new Figure.Segment(Polygon.rectangle(50f, player), shapeRenderer -> {
+                    shapeRenderer.setColor(Color.MAROON);
+                }),
+                new Figure.Segment(new Circle(10f, player), new Vector2(0, 0), shapeRenderer -> {
+                    shapeRenderer.setColor(Color.WHITE);
+                })))));
 
         for (int i = 0; i < 30; i++) {
             // Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() *
@@ -51,6 +64,7 @@ public class Main extends ApplicationAdapter {
         this.world.update();
 
         this.world.drawCollisionShapes();
+        this.world.draw();
     }
 
     @Override

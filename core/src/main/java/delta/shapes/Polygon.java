@@ -93,8 +93,8 @@ public class Polygon extends Shape {
         this.centroid.scl(1f / this.vertices.length);
     }
 
-    public void draw(ShapeRenderer shapeRenderer) {
-        Vector2[] r = this.toWorld(this.vertices);
+    public void draw(ShapeRenderer shapeRenderer, Vector2 offset) {
+        Vector2[] r = this.toWorld(this.vertices, offset);
 
         if (r.length == 3) {
             shapeRenderer.triangle(r[0].x, r[0].y, r[1].x, r[1].y, r[2].x, r[2].y);
@@ -133,11 +133,19 @@ public class Polygon extends Shape {
     }
 
     public Vector2[] toWorld(Vector2[] vertices) {
+        return this.toWorld(vertices, 0, 0);
+    }
+
+    public Vector2[] toWorld(Vector2[] vertices, Vector2 offset) {
+        return this.toWorld(vertices, offset.x, offset.y);
+    }
+
+    public Vector2[] toWorld(Vector2[] vertices, float ox, float oy) {
         Vector2[] worldVertices = new Vector2[vertices.length];
         for (int i = 0; i < worldVertices.length; i++) {
             worldVertices[i] = new Vector2(
-                    (vertices[i].x - centroid.x) * scale + this.parent.pos.x,
-                    (vertices[i].y - centroid.y) * scale + this.parent.pos.y);
+                    (vertices[i].x - centroid.x) * scale + this.parent.pos.x + ox,
+                    (vertices[i].y - centroid.y) * scale + this.parent.pos.y + oy);
         }
         return worldVertices;
     }

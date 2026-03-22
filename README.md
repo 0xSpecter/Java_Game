@@ -1,7 +1,6 @@
 # Java libglw top down game (name wip)
 
 
-
 ## Goals of game
 2d auto targeting top down shooter
 

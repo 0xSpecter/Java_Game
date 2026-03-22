@@ -91,7 +91,13 @@ public class World {
     }
 
     public void draw() {
+        this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
 
+        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
+            obj.drawFigure(this.worldRenderer);
+        }
+        this.worldRenderer.end();
     }
 
     public void resize(int width, int height) {

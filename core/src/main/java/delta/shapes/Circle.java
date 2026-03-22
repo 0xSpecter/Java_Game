@@ -25,10 +25,10 @@ public class Circle extends Shape {
      * Renders the circle
      *
      * @param shapeRenderer the renderer used for drawing
-     * @param parent        the parent object that provides the world position
+     * @param offset        offset
      */
-    public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.circle(this.parent.pos.x, this.parent.pos.y, scale);
+    public void draw(ShapeRenderer shapeRenderer, Vector2 offset) {
+        shapeRenderer.circle(this.parent.pos.x + offset.x, this.parent.pos.y + offset.y, scale);
     }
 
     /**
@@ -39,7 +39,6 @@ public class Circle extends Shape {
      *
      * @param other       the other shape involved in the collision
      * @param otherParent the parent of the other shape
-     * @param parent      the parent of this circle
      * @return an array containing the single collision normal vector
      */
     public Vector2[] getNormals(Shape other) {
@@ -51,8 +50,7 @@ public class Circle extends Shape {
     /**
      * Computes the closest point on the circle's perimeter to the given position.
      *
-     * @param parent the parent object providing the circle's center
-     * @param pos    the target position in world space
+     * @param pos the target position in world space
      * @return the closest point on the circle's boundary
      */
     public Vector2 closest(Vector2 pos) {
@@ -67,8 +65,7 @@ public class Circle extends Shape {
      * Since a circle is symmetric, the projection interval is simply the
      * center's projection ± the radius.
      *
-     * @param axis   the normalized axis to project onto
-     * @param parent the parent providing the circle's world position
+     * @param axis the normalized axis to project onto
      * @return a float array of size 2 where:
      *         <ul>
      *         <li>index 0 = minimum projection value</li>

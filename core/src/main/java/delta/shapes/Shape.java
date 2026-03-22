@@ -21,9 +21,13 @@ public abstract class Shape {
      * Renders the shape.
      *
      * @param shapeRenderer renderer used for drawing
-     * @param parent        object providing world position/transform
+     * @param offset        offset to apply to parents position
      */
-    public abstract void draw(ShapeRenderer shapeRenderer);
+    public abstract void draw(ShapeRenderer shapeRenderer, Vector2 offset);
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        this.draw(shapeRenderer, new Vector2(0, 0));
+    }
 
     /**
      * Checks whether a position lies inside the shape
