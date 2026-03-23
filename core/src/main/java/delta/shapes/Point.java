@@ -1,7 +1,5 @@
 package delta.shapes;
 
-import java.util.Vector;
-
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.*;
 
@@ -24,18 +22,18 @@ public class Point extends Shape {
         shapeRenderer.circle(parent.pos.x, parent.pos.y, scale);
     }
 
-    public Vector2[] getNormals(Shape other, Obj otherParent, Obj parent) {
+    public Vector2[] getNormals(Shape other) {
         return new Vector2[] {
-                other.closest(otherParent, parent.pos).sub(parent.pos).nor()
+                other.closest(other.parent.pos).sub(this.parent.pos).nor()
         };
     }
 
-    public Vector2 closest(Obj parent, Vector2 pos) {
-        return parent.pos;
+    public Vector2 closest(Vector2 pos) {
+        return this.parent.pos;
     }
 
-    public float[] projection(Vector2 axis, Obj parent) {
-        float projection = parent.pos.dot(axis);
+    public float[] projection(Vector2 axis) {
+        float projection = this.parent.pos.dot(axis);
         return new float[] {
                 projection,
                 projection
@@ -63,11 +61,16 @@ public class Point extends Shape {
      * @param origin   origin for comparison
      * @return true if inside (or on boundary)
      */
-    public boolean contains(Vector2 position, Vector2 origin) {
-        float dx = position.x - origin.x;
-        float dy = position.x - origin.x;
+    public boolean contains(Vector2 position) {
+        float dx = position.x - this.parent.pos.x;
+        float dy = position.y - this.parent.pos.y;
 
         return dx + dy == 0;
+    }
+
+    @Override
+    public void draw(ShapeRenderer shapeRenderer, Vector2 offset) {
+        shapeRenderer.circle(this.parent.pos.x, this.parent.pos.y, 1);
     }
 
     @Override

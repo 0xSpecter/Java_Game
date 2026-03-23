@@ -44,4 +44,8 @@ public class Creature extends Obj {
 
         this.pos.add(this.velocity.cpy().scl(delta));
     }
+
+    public void update() {
+
+    }
 }

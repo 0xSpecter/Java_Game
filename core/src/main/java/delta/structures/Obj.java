@@ -36,7 +36,7 @@ public class Obj {
         }
     }
 
-    public void addCollisionShape(CollisionShape shape) {
+    public void setCollisionShape(CollisionShape shape) {
         this.collisionShape = shape;
     }
 

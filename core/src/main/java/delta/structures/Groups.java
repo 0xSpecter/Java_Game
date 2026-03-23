@@ -1,27 +1,22 @@
 package delta.structures;
 
 import java.util.*;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.*;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.viewport.*;
-
 import delta.creatures.*;
 import delta.shapes.*;
 
 public class Groups {
-    public static enum Types {
+    public enum Types {
         OBJECTS,
         PROJECTILES,
-        CREATURES,
+        CREATURES;
     }
 
     private HashMap<Types, Group> groups = new HashMap<>();
 
-    public class Group {
+    public static class Group implements Iterable<Obj> {
         public Types type;
-        public Set<Obj> objects = new HashSet<>();
-        public Set<CollisionShape> collisionShapes = new HashSet<>();
+        public HashSet<Obj> objects = new HashSet<>();
+        public HashSet<CollisionShape> collisionShapes = new HashSet<>();
 
         public Group(Types type) {
             this.type = type;
@@ -36,14 +31,17 @@ public class Groups {
             this.objects.remove(item);
             this.collisionShapes.remove(item.collisionShape);
         }
+
+        @Override
+        public Iterator<Obj> iterator() {
+            return this.objects.iterator();
+        }
     }
 
-    // add element to group
     public void add(Types type, Obj obj) {
         this.groups.get(type).add(obj);
     }
 
-    // remove an element from given group
     public void remove(Types type, Obj obj) {
         this.groups.get(type).remove(obj);
     }
@@ -53,7 +51,6 @@ public class Groups {
     }
 
     public Groups() {
-        // Generate groups
         for (Types type : Types.values()) {
             this.groups.put(type, new Group(type));
         }

@@ -46,11 +46,28 @@ public class World {
     public void update() {
         Input.updateMouseWorldPosition(this.worldViewport);
         this.ui.update();
-        this.player.update();
+
+        for (Obj obj : this.groups.get(Groups.Types.CREATURES)) {
+            Creature creature = (Creature) obj;
+            creature.update();
+        }
+
+        for (CollisionShape[] pair : this.collideCollisionGroups(Groups.Types.CREATURES)) {
+            Creature c1 = (Creature) pair[0].parent;
+            Creature c2 = (Creature) pair[1].parent;
+            c1.moveDirection.scl(pair[1].shape.getNormals(pair[0].shape)[0]);
+            c2.moveDirection.scl(pair[0].shape.getNormals(pair[1].shape)[0]);
+        }
+
+        player.update();
+
         this.worldCamera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.worldCamera.update();
     }
 
+    /**
+     * // sets the internal player variable and adds it to the relevent groups
+     */
     public void setPlayer(Player player) {
         this.player = player;
         this.groups.add(Groups.Types.OBJECTS, player);
@@ -62,39 +79,20 @@ public class World {
 
         this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
         this.worldRenderer.setColor(0f, 0.65f, 1f, 0.75f);
-        for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
+        for (Obj obj : this.groups.get(Groups.Types.OBJECTS)) {
             obj.drawCollisionShape(this.worldRenderer);
         }
-        this.player.drawCollisionShape(this.worldRenderer);
-        this.worldRenderer.end();
 
-        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        this.worldRenderer.setColor(1f, 0.5f, 0.5f, 0.75f);
-        for (CollisionShape[] shapes : this.collideCollisionGroups(Groups.Types.OBJECTS)) {
-            CollisionShape.resolveCollision(shapes[0], shapes[1], worldCamera);
-            shapes[0].draw(worldRenderer);
-            shapes[1].draw(worldRenderer);
-        }
-        this.worldRenderer.end();
-
-        this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        this.worldRenderer.setColor(1f, 0f, 0.0f, 1f);
-        this.worldRenderer.circle(Input.mouseWorldPosition.x, Input.mouseWorldPosition.y, 5);
-
-        this.worldRenderer.setColor(0f, 1f, 0.3f, 1f);
-        for (CollisionShape shape : this.groups.get(Groups.Types.OBJECTS).collisionShapes) {
-            if (shape.contains(Input.mouseWorldPosition)) {
-                shape.draw(worldRenderer);
-            }
-        }
         this.worldRenderer.end();
     }
 
     public void draw() {
+        // :TODO: Drawing will normaly work on a z-index sorted group but rn it just
+        // draws everyting
         this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
 
         this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Obj obj : this.groups.get(Groups.Types.OBJECTS).objects) {
+        for (Obj obj : this.groups.get(Groups.Types.OBJECTS)) {
             obj.drawFigure(this.worldRenderer);
         }
         this.worldRenderer.end();

@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.badlogic.gdx.math.MathUtils;
 
 import delta.structures.*;
@@ -20,6 +22,20 @@ public class Polygon extends Shape {
         this.scale = scale;
         this.updateCentroid();
         this.updateNormals();
+    }
+
+    /**
+     * this constructor creates a copy of the given polygon and a new parent
+     */
+    public Polygon(Polygon polygon, Obj parent) {
+        this(polygon.vertices.clone(), polygon.scale, parent);
+    }
+
+    /**
+     * this constructor creates a copy of the given polygon with the same parent
+     */
+    public Polygon(Polygon polygon) {
+        this(polygon.vertices.clone(), polygon.scale, polygon.parent);
     }
 
     public static Polygon rectangle(float scale, Obj parent) {
@@ -111,7 +127,7 @@ public class Polygon extends Shape {
             }
         }
 
-        this.drawNormals(shapeRenderer);
+        // this.drawNormals(shapeRenderer);
     }
 
     public void drawNormals(ShapeRenderer shapeRenderer) {

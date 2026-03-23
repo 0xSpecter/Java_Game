@@ -16,8 +16,13 @@ import delta.structures.*;
  *
  */
 public class Figure {
+    // :TODO: Maybe implement sprite version on segment
     static Comparator<Figure.Segment> comparator = Comparator.comparingInt(s -> s.z);
     public ArrayList<Segment> segments;
+
+    public Figure(Shape shape, Consumer<ShapeRenderer> options) {
+        this.segments = new ArrayList<>(Arrays.asList(new Figure.Segment(shape, options)));
+    }
 
     public Figure(ArrayList<Segment> segments) {
         this.segments = segments;
@@ -43,6 +48,11 @@ public class Figure {
             this.z = z;
             this.options = options;
         }
+
+        public void draw(ShapeRenderer shapeRenderer) {
+            this.options.accept(shapeRenderer);
+            this.shape.draw(shapeRenderer, offset);
+        }
     }
 
     public void sort(boolean reverseOrder) {
@@ -51,8 +61,7 @@ public class Figure {
 
     public void draw(ShapeRenderer shapeRenderer) {
         for (Segment segment : this.segments) {
-            segment.options.accept(shapeRenderer);
-            segment.shape.draw(shapeRenderer, segment.offset);
+            segment.draw(shapeRenderer);
         }
     }
 }

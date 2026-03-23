@@ -22,6 +22,20 @@ public class Circle extends Shape {
     }
 
     /**
+     * creates a new circle from the given circle with a new parent
+     */
+    public Circle(Circle circle, Obj parent) {
+        this(circle.scale, parent);
+    }
+
+    /**
+     * creates a new circle from the given circle with the same parent
+     */
+    public Circle(Circle circle) {
+        this(circle.scale, circle.parent);
+    }
+
+    /**
      * Renders the circle
      *
      * @param shapeRenderer the renderer used for drawing

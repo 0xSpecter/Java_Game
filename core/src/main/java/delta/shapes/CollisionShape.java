@@ -35,6 +35,10 @@ public class CollisionShape {
         this.parent = parent;
     }
 
+    public CollisionShape(Shape shape) {
+        this(shape, shape.parent);
+    }
+
     public boolean colliding(CollisionShape other) {
         return false;
     }

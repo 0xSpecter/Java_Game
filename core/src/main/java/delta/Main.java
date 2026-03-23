@@ -26,7 +26,7 @@ public class Main extends ApplicationAdapter {
         Gdx.input.setInputProcessor(this.input);
 
         player = new Player(0f, 0f);
-        player.addCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
+        player.setCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
 
         player.setFigure(new Figure(new ArrayList<>(Arrays.asList(
                 new Figure.Segment(Polygon.rectangle(50f, player), shapeRenderer -> {
@@ -37,19 +37,15 @@ public class Main extends ApplicationAdapter {
                 })))));
 
         for (int i = 0; i < 30; i++) {
-            // Obj obj = new Obj((int) (Math.random() * 2000 - 1000), (int) (Math.random() *
-            // 2000 - 1000));
-            Obj obj = new Obj((int) i * 1000, (int) 100f);
-            if (Math.random() > 0.7)
-                obj.addCollisionShape(
-                        new CollisionShape(Polygon.rectangle((int) (Math.random() * 300 + 10), obj), obj));
-            else if (Math.random() > 0.7)
-                obj.addCollisionShape(new CollisionShape(Polygon.triangle((int) (Math.random() * 300 + 10), obj), obj));
-            else if (Math.random() > 0.50)
-                obj.addCollisionShape(new CollisionShape(new Circle((int) (Math.random() * 300 + 10), obj), obj));
-            else
-                obj.addCollisionShape(new CollisionShape(Polygon.pentagon((int) (Math.random() * 300 + 10), obj), obj));
-            world.groups.add(Groups.Types.OBJECTS, obj);
+            BouncingBall ball = new BouncingBall((int) (Math.random() * 2000 - 1000), (int) (Math.random() *
+                    2000 - 1000));
+
+            Circle circle = new Circle(50f, ball);
+            ball.setFigure(new Figure(new Circle(circle), shapeRenderer -> shapeRenderer.setColor(Color.LIME)));
+            ball.setCollisionShape(new CollisionShape(new Circle(circle)));
+
+            world.groups.add(Groups.Types.OBJECTS, ball);
+            world.groups.add(Groups.Types.CREATURES, ball);
         }
 
         world.setPlayer(player);
@@ -63,8 +59,8 @@ public class Main extends ApplicationAdapter {
 
         this.world.update();
 
-        this.world.drawCollisionShapes();
         this.world.draw();
+        // this.world.drawCollisionShapes();
     }
 
     @Override
