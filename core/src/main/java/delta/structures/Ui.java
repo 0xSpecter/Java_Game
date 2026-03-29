@@ -3,21 +3,14 @@ package delta.structures;
 import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
-import com.badlogic.gdx.input.RemoteSender;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.viewport.*;
 
 import delta.creatures.*;
 import delta.shapes.*;
+import delta.ui.*;
 
 public class Ui {
-    public Groups groups = new Groups();
-
     // renderers
     ShapeRenderer uiRenderer = new ShapeRenderer();
 
@@ -25,24 +18,40 @@ public class Ui {
     public OrthographicCamera uiCamera;
     public Viewport uiViewport;
 
-    public Ui(float worldWidth, float worldHeight) {
-        this.uiCamera = new OrthographicCamera();
+    private ArrayList<Element> topLevel = new ArrayList<>();
 
-        this.uiCamera.zoom = 0.2f;
+    public Ui() {
+        this.uiCamera = new OrthographicCamera();
+        this.uiCamera.setToOrtho(true, Constants.worldWidth, Constants.worldHeight);
+
+        this.uiCamera.zoom = 1f;
         this.uiCamera.update();
 
-        // :TODO: what?
-        this.uiViewport = new FillViewport(worldWidth, worldHeight, this.uiCamera);
+        this.uiViewport = new FitViewport(Constants.worldWidth, Constants.worldHeight, this.uiCamera);
         this.uiViewport.apply();
+
+        this.topLevel.add(new Element(50, 50, 300, 100));
+        this.topLevel.add(new Element(0, Constants.worldHeight - 50, 500, 50));
+        this.topLevel.add(new Element(Constants.worldWidth - 100, 300, 50, 300));
+        this.topLevel.add(new MouseElement());
     }
 
     public void update() {
         Input.updateMouseUiPosition(this.uiViewport);
         this.uiCamera.update();
+        for (Element elm : this.topLevel) {
+            elm.update();
+        }
+    }
+
+    private void renderSetup() {
+        this.uiViewport.apply();
+        this.uiRenderer.setProjectionMatrix(this.uiCamera.combined);
     }
 
     // draws collision shapes of all objects
     public void drawCollisionShapes() {
+        this.renderSetup();
         this.uiRenderer.begin(ShapeRenderer.ShapeType.Filled);
         this.uiRenderer.setColor(0f, 1f, 0f, 1f);
         this.uiRenderer.circle(Input.mouseUiPosition.x, Input.mouseUiPosition.y, 5);
@@ -50,7 +59,17 @@ public class Ui {
     }
 
     public void draw() {
+        this.renderSetup();
+        this.uiViewport.apply();
+        this.uiRenderer.setProjectionMatrix(this.uiCamera.combined);
+        this.uiRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.uiRenderer.setColor(0f, 0.65f, 1f, 0.75f);
 
+        for (Element elm : this.topLevel) {
+            elm.draw(this.uiRenderer, new Vector2());
+        }
+
+        this.uiRenderer.end();
     }
 
     public void resize(int width, int height) {

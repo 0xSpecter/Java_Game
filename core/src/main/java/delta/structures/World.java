@@ -3,24 +3,13 @@ package delta.structures;
 import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
-import com.badlogic.gdx.input.RemoteSender;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.*;
 
 import delta.creatures.*;
 import delta.shapes.*;
 
 public class World {
-    private float worldWidth = 8000;
-    private float worldHeight = 8000;
-
-    public Ui ui;
-
     private Player player;
     public Groups groups = new Groups();
 
@@ -32,20 +21,18 @@ public class World {
     public Viewport worldViewport;
 
     public World() {
-        this.ui = new Ui(this.worldWidth, this.worldHeight);
         this.worldCamera = new OrthographicCamera();
 
-        this.worldCamera.setToOrtho(false, this.worldWidth, this.worldHeight);
-        this.worldCamera.zoom = 0.2f;
+        this.worldCamera.setToOrtho(false);
+        this.worldCamera.zoom = 1f;
         this.worldCamera.update();
 
-        this.worldViewport = new FillViewport(this.worldWidth, this.worldHeight, this.worldCamera);
+        this.worldViewport = new FitViewport(Constants.worldWidth, Constants.worldHeight, this.worldCamera);
         this.worldViewport.apply();
     }
 
     public void update() {
         Input.updateMouseWorldPosition(this.worldViewport);
-        this.ui.update();
 
         for (Obj obj : this.groups.get(Groups.Types.CREATURES)) {
             Creature creature = (Creature) obj;
@@ -75,7 +62,7 @@ public class World {
 
     // draws collision shapes of all objects
     public void drawCollisionShapes() {
-        this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
+        this.renderSetup();
 
         this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
         this.worldRenderer.setColor(0f, 0.65f, 1f, 0.75f);
@@ -86,10 +73,15 @@ public class World {
         this.worldRenderer.end();
     }
 
+    private void renderSetup() {
+        this.worldViewport.apply();
+        this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
+    }
+
     public void draw() {
         // :TODO: Drawing will normaly work on a z-index sorted group but rn it just
         // draws everyting
-        this.worldRenderer.setProjectionMatrix(this.worldCamera.combined);
+        this.renderSetup();
 
         this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Obj obj : this.groups.get(Groups.Types.OBJECTS)) {
@@ -135,6 +127,5 @@ public class World {
 
     public void dispose() {
         this.worldRenderer.dispose();
-        this.ui.dispose();
     }
 }
