@@ -40,7 +40,6 @@ public class Element extends Obj {
         this.height = height;
         this.originX = x;
         this.originY = y;
-        this.update();
     }
 
     public void addChild(Element child) {

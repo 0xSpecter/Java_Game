@@ -3,14 +3,14 @@ package delta.structures;
 import java.util.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.*;
 
 import delta.creatures.*;
 import delta.shapes.*;
 
 public class World {
-    private Player player;
+    public static World instance;
+    public static Player player = new Player();
     public Groups groups = new Groups();
 
     // renderers
@@ -21,10 +21,13 @@ public class World {
     public Viewport worldViewport;
 
     public World() {
+        World.instance = this;
+        this.groups.add(Groups.Types.OBJECTS, World.player);
+
         this.worldCamera = new OrthographicCamera();
 
         this.worldCamera.setToOrtho(false);
-        this.worldCamera.zoom = 1f;
+        this.worldCamera.zoom = 3f;
         this.worldCamera.update();
 
         this.worldViewport = new FitViewport(Constants.worldWidth, Constants.worldHeight, this.worldCamera);
@@ -34,30 +37,26 @@ public class World {
     public void update() {
         Input.updateMouseWorldPosition(this.worldViewport);
 
+        // ai
+        for (Obj obj : this.groups.get(Groups.Types.ENEMIES)) {
+            Enemy enemy = (Enemy) obj;
+            enemy.ai(this);
+        }
+
         for (Obj obj : this.groups.get(Groups.Types.CREATURES)) {
             Creature creature = (Creature) obj;
             creature.update();
         }
 
-        for (CollisionShape[] pair : this.collideCollisionGroups(Groups.Types.CREATURES)) {
-            Creature c1 = (Creature) pair[0].parent;
-            Creature c2 = (Creature) pair[1].parent;
-            c1.moveDirection.scl(pair[1].shape.getNormals(pair[0].shape)[0]);
-            c2.moveDirection.scl(pair[0].shape.getNormals(pair[1].shape)[0]);
-        }
-
         player.update();
+        player.targetClosest(this.groups.get(Groups.Types.ENEMIES));
 
         this.worldCamera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.worldCamera.update();
     }
 
-    /**
-     * // sets the internal player variable and adds it to the relevent groups
-     */
-    public void setPlayer(Player player) {
-        this.player = player;
-        this.groups.add(Groups.Types.OBJECTS, player);
+    public static Player getPlayer() {
+        return World.player;
     }
 
     // draws collision shapes of all objects

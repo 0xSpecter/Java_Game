@@ -8,7 +8,8 @@ public class Groups {
     public enum Types {
         OBJECTS,
         PROJECTILES,
-        CREATURES;
+        CREATURES,
+        ENEMIES,
     }
 
     private HashMap<Types, Group> groups = new HashMap<>();

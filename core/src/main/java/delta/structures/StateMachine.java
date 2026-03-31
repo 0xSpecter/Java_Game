@@ -1,7 +1,6 @@
 package delta.structures;
 
 import java.util.*;
-import java.util.Map.Entry;;
 
 public class StateMachine {
     private Map<String, Map<String, Runnable>> states;
@@ -11,7 +10,7 @@ public class StateMachine {
         this.states = new HashMap<>();
     }
 
-    public static void main(String[] args) {
+    public static void Main(String[] args) {
         StateMachine sm = new StateMachine();
 
         sm.add("normal", "move", () -> System.out.println("normal move"));

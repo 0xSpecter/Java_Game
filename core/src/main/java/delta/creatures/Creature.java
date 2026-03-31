@@ -13,11 +13,11 @@ public class Creature extends Obj {
     public Vector2 velocity = new Vector2(0, 0);
     public Vector2 lookDirection = new Vector2(0, 0);
     public Vector2 moveDirection = new Vector2(0, 0);
-    public float acceleration = 0;
-    public float deAcceleration = 0;
+    public float acceleration = 1000;
+    public float deAcceleration = 1000;
     protected int max_slots = 2;
     protected Obj[] slots = new Obj[this.max_slots];
-    protected Obj target = null;
+    public Creature target = null;
 
     public Creature(float x, float y) {
         super(x, y);
@@ -47,5 +47,13 @@ public class Creature extends Obj {
 
     public void update() {
 
+    }
+
+    public Vector2 getTargetDirection() {
+        return new Vector2(this.target.pos).sub(this.pos).nor();
+    }
+
+    public boolean hasTarget() {
+        return this.target != null;
     }
 }

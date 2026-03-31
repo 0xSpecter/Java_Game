@@ -11,6 +11,7 @@ import delta.shapes.*;
 import delta.ui.*;
 
 public class Ui {
+    public static Ui instance;
     // renderers
     ShapeRenderer uiRenderer = new ShapeRenderer();
 
@@ -18,9 +19,10 @@ public class Ui {
     public OrthographicCamera uiCamera;
     public Viewport uiViewport;
 
-    private ArrayList<Element> topLevel = new ArrayList<>();
+    public ArrayList<Element> topLevel = new ArrayList<>();
 
     public Ui() {
+        Ui.instance = this;
         this.uiCamera = new OrthographicCamera();
         this.uiCamera.setToOrtho(true, Constants.worldWidth, Constants.worldHeight);
 
@@ -34,6 +36,7 @@ public class Ui {
         this.topLevel.add(new Element(0, Constants.worldHeight - 50, 500, 50));
         this.topLevel.add(new Element(Constants.worldWidth - 100, 300, 50, 300));
         this.topLevel.add(new MouseElement());
+        this.topLevel.add(new PlayerTarget());
     }
 
     public void update() {
@@ -79,5 +82,17 @@ public class Ui {
 
     public void dispose() {
         this.uiRenderer.dispose();
+    }
+
+    /**
+     * returns the ui position from a world position
+     */
+    public Vector2 worldToUi(Vector2 pos) {
+        Vector2 uiPos = World.instance.worldViewport.project(pos.cpy());
+        uiPos = Ui.instance.uiViewport.unproject(uiPos);
+        // flip y
+        uiPos.y = Ui.instance.uiViewport.getWorldHeight() - uiPos.y;
+
+        return uiPos;
     }
 }

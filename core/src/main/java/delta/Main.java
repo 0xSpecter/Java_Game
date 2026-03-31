@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import delta.structures.*;
+import delta.ui.HealthBar;
 import delta.creatures.*;
 import delta.shapes.*;
 
@@ -22,13 +23,13 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
+        player = World.player;
+        player.setCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
+
         world = new World();
         ui = new Ui();
         input = new Input();
         Gdx.input.setInputProcessor(this.input);
-
-        player = new Player(0f, 0f);
-        player.setCollisionShape(new CollisionShape(Polygon.rectangle(50f, player), player));
 
         player.setFigure(new Figure(new ArrayList<>(Arrays.asList(
                 new Figure.Segment(Polygon.rectangle(50f, player), shapeRenderer -> {
@@ -39,18 +40,18 @@ public class Main extends ApplicationAdapter {
                 })))));
 
         for (int i = 0; i < 30; i++) {
-            BouncingBall ball = new BouncingBall((int) (Math.random() * 2000 - 1000), (int) (Math.random() *
-                    2000 - 1000));
+            Enemy enemy = new Enemy((int) (Math.random() * 4000 - 2000), (int) (Math.random() *
+                    4000 - 2000));
 
-            Circle circle = new Circle(50f, ball);
-            ball.setFigure(new Figure(new Circle(circle), shapeRenderer -> shapeRenderer.setColor(Color.LIME)));
-            ball.setCollisionShape(new CollisionShape(new Circle(circle)));
+            Circle circle = new Circle(50f, enemy);
+            enemy.setFigure(new Figure(new Circle(circle), shapeRenderer -> shapeRenderer.setColor(Color.LIME)));
+            enemy.setCollisionShape(new CollisionShape(new Circle(circle)));
 
-            world.groups.add(Groups.Types.OBJECTS, ball);
-            world.groups.add(Groups.Types.CREATURES, ball);
+            world.groups.add(Groups.Types.OBJECTS, enemy);
+            world.groups.add(Groups.Types.CREATURES, enemy);
+            world.groups.add(Groups.Types.ENEMIES, enemy);
+            ui.topLevel.add(new HealthBar(enemy));
         }
-
-        world.setPlayer(player);
     }
 
     @Override
