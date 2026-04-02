@@ -66,4 +66,9 @@ public class Utils {
     public static void dispose() {
         shapeRenderer.dispose();
     }
+
+    public static Vector2 randomDirection() {
+        float angle = MathUtils.random(MathUtils.PI2);
+        return new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
+    }
 }

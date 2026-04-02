@@ -1,6 +1,9 @@
 package delta.structures;
 
 import java.util.*;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.utils.viewport.*;
@@ -40,7 +43,7 @@ public class World {
         // ai
         for (Obj obj : this.groups.get(Groups.Types.ENEMIES)) {
             Enemy enemy = (Enemy) obj;
-            enemy.ai(this);
+            enemy.ai();
         }
 
         for (Obj obj : this.groups.get(Groups.Types.CREATURES)) {
@@ -53,10 +56,6 @@ public class World {
 
         this.worldCamera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.worldCamera.update();
-    }
-
-    public static Player getPlayer() {
-        return World.player;
     }
 
     // draws collision shapes of all objects
@@ -83,9 +82,34 @@ public class World {
         this.renderSetup();
 
         this.worldRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // draws a checkerboard map for testing
+        int scale = 300;
+        float zoom = this.worldCamera.zoom;
+        int width = (int) (this.worldViewport.getWorldWidth() * zoom + scale * 5) / scale;
+        int height = (int) (this.worldViewport.getWorldHeight() * zoom + scale * 5) / scale;
+        int camX = (int) (this.worldCamera.position.x / scale);
+        int camY = (int) (this.worldCamera.position.y / scale);
+
+        int x = -width / 2 + camX;
+        int y = -height / 2 + camY;
+        while (true) {
+            this.worldRenderer.setColor((x + y) % 2 == 0 ? Color.BLACK : Color.WHITE);
+            this.worldRenderer.rect(x * scale, y * scale, scale, scale);
+            x += 1;
+            if (x >= width / 2 + camX) {
+                y += 1;
+                x = -width / 2 + camX;
+                if (y >= height / 2 + camY) {
+                    break;
+                }
+            }
+        }
+
         for (Obj obj : this.groups.get(Groups.Types.OBJECTS)) {
             obj.drawFigure(this.worldRenderer);
         }
+
         this.worldRenderer.end();
     }
 
@@ -122,6 +146,10 @@ public class World {
 
     public Set<CollisionShape[]> collideOneToMany(CollisionShape one, Groups.Types groups) {
         return this.collideOneToMany(one, new Groups.Types[] { groups });
+    }
+
+    public static float getDelta() {
+        return Gdx.graphics.getDeltaTime();
     }
 
     public void dispose() {

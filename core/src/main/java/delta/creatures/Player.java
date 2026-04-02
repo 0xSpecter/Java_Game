@@ -10,8 +10,8 @@ import delta.shapes.*;
 public class Player extends Creature {
     public Player() {
         super(0, 0);
-        this.acceleration = 1000f;
-        this.deAcceleration = 600f;
+        this.maxSpeed = 2000;
+        this.acceleration = 3000;
     }
 
     public void update() {
@@ -27,12 +27,7 @@ public class Player extends Creature {
             dir.y--;
 
         dir.nor();
-        this.moveDirection = dir.cpy();
-        if (dir.isZero())
-            this.deAccelerate();
-        else {
-            this.accelerate();
-        }
+        this.moveDir = dir.cpy();
         this.move();
     }
 
