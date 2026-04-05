@@ -1,7 +1,12 @@
 package delta.projectiles;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashSet;
+
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+import delta.weapons.*;
 
 /**
  * an optimasajon class to make projectiles less prosessing intensive
@@ -18,9 +23,19 @@ public class ProjectilePool {
      * allocate an instance of a projectile to free pool
      */
     public void alloc(Projectile projectile) {
-        if (this.active.contains(projectile))
+        if (this.active.contains(projectile) || this.free.contains(projectile))
             throw new IllegalStateException("allocated already allocated projectile");
+        projectile.pool = this;
         this.free.add(projectile);
+    }
+
+    public int allocNecessary(float firerate, Projectile projectile) {
+        int allocated = (int) (projectile.lifetime * (firerate / 60)) + 1;
+        for (int i = 0; i < allocated; i++) {
+            this.alloc(projectile.clone());
+        }
+
+        return allocated;
     }
 
     /**
@@ -48,7 +63,8 @@ public class ProjectilePool {
     public int purge(int count) {
         int removed = 0;
         while (!this.free.isEmpty() && removed < count) {
-            this.free.pop();
+            Projectile proj = this.free.pop();
+            proj.pool = null;
             removed++;
         }
 
@@ -67,5 +83,18 @@ public class ProjectilePool {
      */
     public int activeCount() {
         return active.size();
+    }
+
+    public void update() {
+        // idk fikser at man kan fjerne elementer mens loopen pågår
+        for (Projectile projectile : new ArrayList<>(this.active)) {
+            projectile.update();
+        }
+    }
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        for (Projectile projectile : this.active) {
+            projectile.drawFigure(shapeRenderer);
+        }
     }
 }

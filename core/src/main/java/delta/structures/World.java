@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.*;
 
 import delta.creatures.*;
 import delta.shapes.*;
+import delta.weapons.BasicWeapon;
 
 public class World {
     public static World instance;
@@ -53,6 +54,8 @@ public class World {
 
         player.update();
         player.targetClosest(this.groups.get(Groups.Types.ENEMIES));
+
+        BasicWeapon.pool.update();
 
         this.worldCamera.position.set(this.player.pos.x, this.player.pos.y, 0);
         this.worldCamera.update();
@@ -109,6 +112,8 @@ public class World {
         for (Obj obj : this.groups.get(Groups.Types.OBJECTS)) {
             obj.drawFigure(this.worldRenderer);
         }
+
+        BasicWeapon.pool.draw(this.worldRenderer);
 
         this.worldRenderer.end();
     }

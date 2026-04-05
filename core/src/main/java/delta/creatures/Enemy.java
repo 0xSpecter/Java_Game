@@ -3,14 +3,17 @@ package delta.creatures;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import delta.structures.World;
+import delta.weapons.BasicWeapon;
 import delta.Utils;
 
 public class Enemy extends Creature {
     private Vector2 dest;
     private float sleep;
+    private BasicWeapon weapon;
 
     public Enemy(float x, float y) {
         super(x, y);
+        this.weapon = new BasicWeapon(this);
         this.newDest();
     }
 
@@ -21,6 +24,13 @@ public class Enemy extends Creature {
         } else if (this.dest != null) {
             this.moveDir = this.dest.cpy().sub(this.pos).nor();
             this.move();
+        }
+
+        this.weapon.update();
+
+        if (this.pos.dst(this.target.pos) < 1000 && MathUtils.random() < 0.1 && this.target != null
+                && this.weapon.canFire()) {
+            this.weapon.fire(this.target);
         }
     }
 
